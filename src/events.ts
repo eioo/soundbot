@@ -15,7 +15,7 @@ import {
 import { extractName } from './lib/telegramHelper';
 import { ISound } from './lib/types';
 
-export enum UserActions {
+enum UserActions {
   SendSound = 'sending sound',
   WritingName = 'writing name',
 }
@@ -54,7 +54,10 @@ function commandHandler() {
     }
 
     await setUserAction(msg.from.id, UserActions.SendSound);
-    reply(msg, `🎶 ${extractName(msg)} please send/record your sound 🎶`);
+    reply(
+      msg,
+      `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`
+    );
   });
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
@@ -63,6 +66,7 @@ function commandHandler() {
     }
 
     clearUserAction(msg.from.id);
+    await reply(msg, 'Cancelled sending sound');
   });
 
   bot.onText(/^\/list$/, async (msg: Message) => {

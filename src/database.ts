@@ -64,11 +64,12 @@ export async function addSound(userId: number, sound: ISound) {
 }
 
 export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
-  const result = await pg('sounds')
-    .select('*')
+  const result = await pg('sounds').select('*');
+  /*
     .where({
       user_id: userId,
     });
+    */
 
   return result;
 }
@@ -80,7 +81,6 @@ export async function getSoundFromUser(
   const result = await pg('sounds')
     .select('*')
     .where({
-      user_id: userId,
       identifier,
     });
 

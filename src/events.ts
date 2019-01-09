@@ -110,7 +110,10 @@ function commandHandler() {
     }
 
     if (sound.type === 'audio') {
-      return bot.sendAudio(msg.chat.id, sound.file_id);
+      return bot.sendAudio(msg.chat.id, sound.file_id, {
+        title: 'test',
+        caption: 'perse',
+      });
     }
 
     if (sound.type === 'voice') {

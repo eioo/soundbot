@@ -16,7 +16,7 @@ import { extractName } from './lib/telegramHelper';
 import { ISound } from './lib/types';
 
 enum UserActions {
-  SendSound = 'sending sound',
+  SendingSound = 'sending sound',
   WritingName = 'writing name',
 }
 
@@ -24,6 +24,7 @@ enum InteractionError {
   Action = '🤔 Something went wrong, try again or type /cancel',
   NotEnoughArgs = '🤔 I need more arguments than that',
   SoundNotFound = '🤔 You don\'t have sound with that name',
+  IdentifierExists = '🤦🏻‍♂️ Pick another name, that\'s already taken.',
   NoSoundsYet = '😰 You don\'t have any sound! Type /add to make your first',
 }
 
@@ -53,7 +54,7 @@ function commandHandler() {
       await addUser(msg.from.id);
     }
 
-    await setUserAction(msg.from.id, UserActions.SendSound);
+    await setUserAction(msg.from.id, UserActions.SendingSound);
     reply(
       msg,
       `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`
@@ -81,7 +82,7 @@ function commandHandler() {
     }
 
     const response =
-      '🎵 Your sounds:\n' +
+      '🎵 All sounds:\n' +
       sounds
         .map((sound, i) => {
           return `${i + 1}. ${sound.identifier}`;
@@ -91,7 +92,7 @@ function commandHandler() {
     await reply(msg, response);
   });
 
-  bot.onText(/^\/play \w+/i, async (msg: Message) => {
+  bot.onText(/^\/p(lay)? \w+/i, async (msg: Message) => {
     if (!msg.from || msg.from.is_bot) {
       return;
     }
@@ -137,10 +138,16 @@ function messageHandler() {
     }
 
     const lastSound = await getLastSound(msg.from.id);
-    const identifier = msg.text;
+    const identifier = msg.text.toLowerCase();
 
     if (!identifier || identifier.startsWith('/')) {
       return await reply(msg, InteractionError.Action);
+    }
+
+    const soundExists = await getSoundFromUser(msg.from.id, identifier);
+
+    if (soundExists) {
+      return await reply(msg, InteractionError.IdentifierExists);
     }
 
     await addSound(msg.from.id, {
@@ -151,9 +158,7 @@ function messageHandler() {
     await clearUserAction(msg.from.id);
     await reply(
       msg,
-      `🥳 ${extractName(
-        msg
-      )}, your sound was added. Type /list to see your sounds`
+      `🥳 ${extractName(msg)}, your sound was added. Type /list to see sounds`
     );
   });
 }
@@ -166,7 +171,7 @@ function soundHandler() {
 
     const currentAction = await getUserAction(msg.from.id);
 
-    if (currentAction !== UserActions.SendSound) {
+    if (currentAction !== UserActions.SendingSound) {
       return;
     }
 

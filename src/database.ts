@@ -63,19 +63,22 @@ export async function addSound(userId: number, sound: ISound) {
   });
 }
 
-export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
+export async function getAllSounds(): Promise<ISound[]> {
   const result = await pg('sounds').select('*');
-  /*
+  return result;
+}
+
+export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
+  const result = await pg('sounds')
+    .select('*')
     .where({
       user_id: userId,
     });
-    */
 
   return result;
 }
 
-export async function getSoundFromUser(
-  userId: number,
+export async function getSound(
   identifier: string
 ): Promise<ISound | undefined> {
   const result = await pg('sounds')
@@ -85,4 +88,24 @@ export async function getSoundFromUser(
     });
 
   return result[0];
+}
+
+export async function getSoundFromUser(
+  userId: number,
+  identifier: string
+): Promise<ISound | undefined> {
+  const result = await pg('sounds')
+    .select('*')
+    .where({
+      user_id: userId,
+      identifier,
+    });
+
+  return result[0];
+}
+
+export async function deleteSound(identifier: string) {
+  await pg('sounds')
+    .where({ identifier })
+    .del();
 }

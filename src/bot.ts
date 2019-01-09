@@ -1,6 +1,6 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 import { Message } from 'node-telegram-bot-api';
-import { eventHandler } from './events';
+import { eventHandlers } from './events';
 import { BotError } from './lib/customErrors';
 
 const botToken = process.env.BOT_TOKEN;
@@ -13,13 +13,18 @@ export const bot = new TelegramBot(botToken);
 
 export async function startBot() {
   bot.startPolling();
-  eventHandler();
+
+  eventHandlers();
 
   console.log('Bot running');
 }
 
-export async function reply(msg: Message, text: string) {
-  bot.sendMessage(msg.chat.id, text, {
+export async function reply(
+  msg: Message,
+  text: string
+): Promise<Message | undefined> {
+  return await bot.sendMessage(msg.chat.id, text, {
     parse_mode: 'Markdown',
+    disable_notification: true,
   });
 }

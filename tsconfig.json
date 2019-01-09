@@ -6,7 +6,7 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "strictNullChecks": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noImplicitThis": true,
     "noImplicitAny": true,
     "forceConsistentCasingInFileNames": true,

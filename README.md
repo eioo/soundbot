@@ -22,7 +22,7 @@ npm run start
 | Key                | Explanation                                    |
 | ------------------ | ---------------------------------------------- |
 | BOT_TOKEN          | Your Telegram bot token                        |
-| SECRET_KEY         | Your Telegram bot token                        |
+| SECRET_KEY         | Your super secret key (this can be any string, needed for export/import of sounds)|
 | PG_HOST            | PostgreSQL host                                |
 | PG_DATABASE        | PostgreSQL database name                       |
 | PG_USER            | PostgreSQL username                            |

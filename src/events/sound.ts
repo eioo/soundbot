@@ -1,5 +1,5 @@
 import { Message } from 'node-telegram-bot-api';
-import { BotResponse, UserActions } from '.';
+import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import {
   addSound,
@@ -19,12 +19,12 @@ export function soundHandler() {
 
     const currentAction = await getUserAction(msg.from.id);
 
-    if (currentAction !== UserActions.SendingSound) {
+    if (currentAction !== userActions.sendingSound) {
       return;
     }
 
     if (!msg.voice && !msg.audio) {
-      return await reply(msg, BotResponse.NoVoiceOrAudio);
+      return await reply(msg, botResponses.noVoiceOrAudio);
     }
 
     const sound = (msg.voice || msg.audio) as ISound;
@@ -48,7 +48,7 @@ export function soundHandler() {
       type: msg.audio ? 'audio' : 'voice',
       ...sound,
     });
-    await setUserAction(msg.from.id, UserActions.WritingName);
+    await setUserAction(msg.from.id, userActions.writingName);
     await reply(
       msg,
       `🤩 Thank you ${extractName(msg)}! What name would you want for it?`

@@ -1,5 +1,5 @@
 import { Message } from 'node-telegram-bot-api';
-import { BotResponse, UserActions } from '.';
+import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import {
   addSound,
@@ -18,7 +18,7 @@ export function messageHandler() {
 
     const currentAction = await getUserAction(msg.from.id);
 
-    if (currentAction !== UserActions.WritingName) {
+    if (currentAction !== userActions.writingName) {
       return;
     }
 
@@ -26,13 +26,13 @@ export function messageHandler() {
     const identifier = msg.text.toLowerCase();
 
     if (!identifier || identifier.startsWith('/')) {
-      return await reply(msg, BotResponse.NoVoiceOrAudio);
+      return await reply(msg, botResponses.noVoiceOrAudio);
     }
 
     const soundExists = await getSoundFromUser(msg.from.id, identifier);
 
     if (soundExists) {
-      return await reply(msg, BotResponse.IdentifierExists);
+      return await reply(msg, botResponses.identifierExists);
     }
 
     await addSound(msg.from.id, {

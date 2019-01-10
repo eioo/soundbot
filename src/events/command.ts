@@ -1,5 +1,5 @@
 import { Message } from 'node-telegram-bot-api';
-import { BotResponse, UserActions } from '.';
+import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import {
   addUser,
@@ -21,7 +21,7 @@ export function commandHandler() {
       return;
     }
 
-    await reply(msg, BotResponse.Welcome);
+    await reply(msg, botResponses.welcome);
   });
 
   bot.onText(/^\/add(sound)?$/i, async (msg: Message) => {
@@ -33,7 +33,7 @@ export function commandHandler() {
       await addUser(msg.from.id);
     }
 
-    await setUserAction(msg.from.id, UserActions.SendingSound);
+    await setUserAction(msg.from.id, userActions.sendingSound);
     await reply(
       msg,
       `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`
@@ -60,7 +60,7 @@ export function commandHandler() {
       : await getAllSoundsFromUser(msg.from.id);
 
     if (!sounds.length) {
-      return await reply(msg, BotResponse.NoSoundsYet);
+      return await reply(msg, botResponses.noSoundsYet);
     }
 
     const response =
@@ -78,7 +78,7 @@ export function commandHandler() {
     const args = parseArgs(msg);
 
     if (!args.length) {
-      return await reply(msg, BotResponse.NotEnoughArgs);
+      return await reply(msg, botResponses.notEnoughArgs);
     }
 
     const identifier = args.join(' ');
@@ -86,10 +86,10 @@ export function commandHandler() {
 
     if (sound) {
       await deleteSound(identifier);
-      return await reply(msg, BotResponse.SoundDeleted);
+      return await reply(msg, botResponses.soundDeleted);
     }
 
-    await reply(msg, BotResponse.SoundNotFound);
+    await reply(msg, botResponses.soundNotFound);
   });
 
   bot.onText(/^\/export$/i, async (msg: Message) => {
@@ -115,14 +115,14 @@ export function commandHandler() {
     const args = (msg.text || '').split(' ').slice(1);
 
     if (!args.length) {
-      return await reply(msg, BotResponse.NotEnoughArgs);
+      return await reply(msg, botResponses.notEnoughArgs);
     }
 
     const identifier = args.join(' ');
     const sound = await getSound(identifier);
 
     if (!sound) {
-      return await reply(msg, BotResponse.SoundNotFound);
+      return await reply(msg, botResponses.soundNotFound);
     }
 
     if (sound.type === 'audio') {

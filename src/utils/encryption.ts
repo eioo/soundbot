@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { EnvError } from './customErrors';
+import { EnvError } from '../interfaces/customErrors';
 
 const algorithm = 'aes256';
 const key = process.env.SECRET_KEY;

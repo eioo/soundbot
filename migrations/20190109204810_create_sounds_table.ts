@@ -9,6 +9,7 @@ exports.up = (knex: Knex) => {
     table.string('mime_type').notNullable();
     table.string('performer');
     table.string('title');
+    table.string('identifier').notNullable();
     table.string('type').notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
   });

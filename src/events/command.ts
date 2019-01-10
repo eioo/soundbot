@@ -9,6 +9,7 @@ import {
   getAllSoundsFromUser,
   getSound,
   getSoundFromUser,
+  searchSounds,
   setUserAction,
   userExists,
 } from '../database';
@@ -119,11 +120,13 @@ export function commandHandler() {
     }
 
     const identifier = args.join(' ');
-    const sound = await getSound(identifier);
+    const sounds = await searchSounds(identifier);
 
-    if (!sound) {
+    if (!sounds.length) {
       return reply(msg, botResponses.soundNotFound);
     }
+
+    const sound = sounds.find(x => x.identifier === identifier) || sounds[0];
 
     const canBeSentAsVoice =
       sound.mime_type === 'audio/ogg' && sound.file_size < Math.pow(10, 6);

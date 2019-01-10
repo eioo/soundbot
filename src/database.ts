@@ -90,13 +90,8 @@ export async function getSoundFromUser(
   return result[0];
 }
 
-export async function getAllSounds(limit?: number): Promise<ISound[]> {
-  const result = limit
-    ? await pg('sounds')
-        .select('*')
-        .limit(limit)
-    : await pg('sounds').select('*');
-
+export async function getAllSounds(): Promise<ISound[]> {
+  const result = await pg('sounds').select('*');
   return result;
 }
 
@@ -110,14 +105,10 @@ export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
   return result;
 }
 
-export async function searchSounds(
-  query: string,
-  limit?: number
-): Promise<ISound[]> {
+export async function searchSounds(query: string): Promise<ISound[]> {
   const result = await pg('sounds')
     .select('*')
-    .where('identifier', 'ilike', `%${query}%`)
-    .limit(limit || Infinity);
+    .where('identifier', 'ilike', `%${query}%`);
 
   return result;
 }

@@ -14,14 +14,5 @@ export interface ISound {
   created_at?: string;
   type: 'audio' | 'voice';
   identifier: string;
-}
-
-interface IGetSoundOptions {
-  type: 'user' | 'all';
-  identifier: string;
-}
-
-interface IGetAllSoundsOptions {
-  type: 'user' | 'all';
-  limit?: number;
+  file_size: number;
 }

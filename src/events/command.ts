@@ -125,12 +125,15 @@ export function commandHandler() {
       return reply(msg, botResponses.soundNotFound);
     }
 
-    if (sound.type === 'audio') {
-      return bot.sendAudio(msg.chat.id, sound.file_id);
+    const canBeSentAsVoice =
+      sound.mime_type === 'audio/ogg' && sound.file_size < Math.pow(10, 6);
+
+    if (sound.type === 'voice' || canBeSentAsVoice) {
+      return bot.sendVoice(msg.chat.id, sound.file_id);
     }
 
-    if (sound.type === 'voice') {
-      return bot.sendVoice(msg.chat.id, sound.file_id);
+    if (sound.type === 'audio') {
+      return bot.sendAudio(msg.chat.id, sound.file_id);
     }
 
     await reply(msg, 'call 911 now');

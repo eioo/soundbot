@@ -1,7 +1,7 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 import { eventHandlers } from './events';
 import { EnvError } from './interfaces/customErrors';
-import * as Logger from './logger';
+import * as Logger from './utils/logger';
 
 const botToken = process.env.BOT_TOKEN;
 

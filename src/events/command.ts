@@ -7,13 +7,12 @@ import {
   deleteSound,
   getAllSounds,
   getAllSoundsFromUser,
-  getSound,
   getSoundFromUser,
   searchSounds,
   setUserAction,
   userExists,
 } from '../database';
-import { decrypt, encrypt } from '../utils/encryption';
+import { encrypt } from '../utils/encryption';
 import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {

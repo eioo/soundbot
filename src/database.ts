@@ -11,8 +11,8 @@ export const pg = Knex({
   },
 });
 
-export async function addUser(userId: number) {
-  await pg('users').insert({
+export function addUser(userId: number) {
+  return pg('users').insert({
     id: userId,
   });
 }
@@ -22,8 +22,8 @@ export async function userExists(userId: number): Promise<boolean> {
   return !!result.length;
 }
 
-export async function setUserAction(userId: number, action: string) {
-  await pg('users')
+export function setUserAction(userId: number, action: string) {
+  return pg('users')
     .update('current_action', action)
     .where({ id: userId });
 }
@@ -41,8 +41,8 @@ export async function clearUserAction(userId: number) {
   setUserAction(userId, '');
 }
 
-export async function setCurrentSound(userId: number, sound: ISound) {
-  await pg('users')
+export function setCurrentSound(userId: number, sound: ISound) {
+  return pg('users')
     .update('last_sound', JSON.stringify(sound))
     .where({ id: userId });
 }

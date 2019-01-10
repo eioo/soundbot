@@ -19,11 +19,11 @@ export async function startBot() {
   console.log('Bot running');
 }
 
-export async function reply(
+export function reply(
   msg: Message,
   text: string
 ): Promise<Message | undefined> {
-  return await bot.sendMessage(msg.chat.id, text, {
+  return bot.sendMessage(msg.chat.id, text, {
     parse_mode: 'Markdown',
     disable_notification: true,
   });

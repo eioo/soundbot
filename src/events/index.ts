@@ -8,9 +8,10 @@ export const userActions = {
 };
 
 export const botResponses = {
-  identifierExists: "🤦🏻‍♂️ Pick another name, that's already taken.",
+  identifierExists: "🤦🏻‍♂️ Pick another name, that's already taken",
+  invalidIdentifier: `🤦🏻‍♂️ Name can't start with "/" or be empty`,
   noSoundsYet: '😰 No sounds yet! Type /add to add your first one',
-  noVoiceOrAudio: '🤔 Something went wrong, try again or type /cancel',
+  noVoiceOrAudio: '🤔 Got no sound / audio, try again or type /cancel',
   notEnoughArgs: '🤔 I need more arguments than that',
   soundDeleted: '🤯 Sound was deleted',
   soundNotFound: "🤔 You don't have sound with that name",

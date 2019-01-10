@@ -48,7 +48,7 @@ export async function getUserAction(userId: number): Promise<string> {
 }
 
 export async function clearUserAction(userId: number) {
-  setUserAction(userId, '');
+  return setUserAction(userId, '');
 }
 
 export function setCurrentSound(userId: number, sound: ISound) {

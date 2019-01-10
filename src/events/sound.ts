@@ -8,8 +8,8 @@ import {
   setCurrentSound,
   setUserAction,
 } from '../database';
-import { extractName } from '../lib/telegramHelper';
-import { ISound } from '../lib/types';
+import { ISound } from '../interfaces/types';
+import { extractName } from '../utils/telegramHelper';
 
 export function soundHandler() {
   const listener = async (msg: Message) => {
@@ -24,7 +24,7 @@ export function soundHandler() {
     }
 
     if (!msg.voice && !msg.audio) {
-      return await reply(msg, botResponses.noVoiceOrAudio);
+      return reply(msg, botResponses.noVoiceOrAudio);
     }
 
     const sound = (msg.voice || msg.audio) as ISound;

@@ -1,5 +1,5 @@
 import * as Knex from 'knex';
-import { ISound } from './lib/types';
+import { ISound } from './interfaces/types';
 
 export const pg = Knex({
   client: 'pg',

@@ -8,7 +8,7 @@ import {
   getSoundFromUser,
   getUserAction,
 } from '../database';
-import { extractName } from '../lib/telegramHelper';
+import { extractName } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
@@ -26,13 +26,13 @@ export function messageHandler() {
     const identifier = msg.text.toLowerCase();
 
     if (!identifier || identifier.startsWith('/')) {
-      return await reply(msg, botResponses.noVoiceOrAudio);
+      return reply(msg, botResponses.noVoiceOrAudio);
     }
 
     const soundExists = await getSoundFromUser(msg.from.id, identifier);
 
     if (soundExists) {
-      return await reply(msg, botResponses.identifierExists);
+      return reply(msg, botResponses.identifierExists);
     }
 
     await addSound(msg.from.id, {

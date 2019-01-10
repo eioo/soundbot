@@ -12,8 +12,8 @@ import {
   setUserAction,
   userExists,
 } from '../database';
-import { decrypt, encrypt } from '../lib/encryption';
-import { extractName, parseArgs } from '../lib/telegramHelper';
+import { decrypt, encrypt } from '../utils/encryption';
+import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
@@ -60,7 +60,7 @@ export function commandHandler() {
       : await getAllSoundsFromUser(msg.from.id);
 
     if (!sounds.length) {
-      return await reply(msg, botResponses.noSoundsYet);
+      return reply(msg, botResponses.noSoundsYet);
     }
 
     const response =
@@ -78,7 +78,7 @@ export function commandHandler() {
     const args = parseArgs(msg);
 
     if (!args.length) {
-      return await reply(msg, botResponses.notEnoughArgs);
+      return reply(msg, botResponses.notEnoughArgs);
     }
 
     const identifier = args.join(' ');
@@ -86,7 +86,7 @@ export function commandHandler() {
 
     if (sound) {
       await deleteSound(identifier);
-      return await reply(msg, botResponses.soundDeleted);
+      return reply(msg, botResponses.soundDeleted);
     }
 
     await reply(msg, botResponses.soundNotFound);
@@ -115,14 +115,14 @@ export function commandHandler() {
     const args = (msg.text || '').split(' ').slice(1);
 
     if (!args.length) {
-      return await reply(msg, botResponses.notEnoughArgs);
+      return reply(msg, botResponses.notEnoughArgs);
     }
 
     const identifier = args.join(' ');
     const sound = await getSound(identifier);
 
     if (!sound) {
-      return await reply(msg, botResponses.soundNotFound);
+      return reply(msg, botResponses.soundNotFound);
     }
 
     if (sound.type === 'audio') {

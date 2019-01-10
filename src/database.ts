@@ -27,13 +27,21 @@ export async function userExists(userId: number): Promise<boolean> {
   return Boolean(result.length);
 }
 
-export function setUserAction(userId: number, action: string) {
+export async function setUserAction(userId: number, action: string) {
+  if (!(await userExists(userId))) {
+    await addUser(userId);
+  }
+
   return pg('users')
     .update('current_action', action)
     .where({ id: userId });
 }
 
 export async function getUserAction(userId: number): Promise<string> {
+  if (!(await userExists(userId))) {
+    await addUser(userId);
+  }
+
   const result = await pg('users')
     .select('current_action')
     .where({ id: userId })
@@ -51,7 +59,7 @@ export async function clearUserAction(userId: number) {
   return setUserAction(userId, '');
 }
 
-export function setCurrentSound(userId: number, sound: ISound) {
+export async function setCurrentSound(userId: number, sound: ISound) {
   return pg('users')
     .update('last_sound', JSON.stringify(sound))
     .where({ id: userId });

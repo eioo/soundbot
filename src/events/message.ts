@@ -12,6 +12,7 @@ import { extractName } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
+    console.log(msg);
     if (!msg.from || msg.from.is_bot || !msg.text) {
       return;
     }

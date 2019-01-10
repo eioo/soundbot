@@ -24,12 +24,12 @@ export function soundHandler() {
     }
 
     if (!msg.voice && !msg.audio) {
-      return await reply(msg, BotResponse.Action);
+      return await reply(msg, BotResponse.NoVoiceOrAudio);
     }
 
     const sound = (msg.voice || msg.audio) as ISound;
 
-    if (msg.caption) {
+    if (msg.caption && /\w[\w ]+/.test(msg.caption)) {
       await addSound(msg.from.id, {
         type: 'audio',
         identifier: msg.caption,

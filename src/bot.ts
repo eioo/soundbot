@@ -1,12 +1,12 @@
 import * as TelegramBot from 'node-telegram-bot-api';
 import { Message } from 'node-telegram-bot-api';
 import { eventHandlers } from './events';
-import { BotError } from './lib/customErrors';
+import { EnvError } from './lib/customErrors';
 
 const botToken = process.env.BOT_TOKEN;
 
 if (!botToken) {
-  throw new BotError('No bot token found.');
+  throw new EnvError('No BOT_TOKEN in .env');
 }
 
 export const bot = new TelegramBot(botToken);

@@ -26,7 +26,7 @@ export function messageHandler() {
     const identifier = msg.text.toLowerCase();
 
     if (!identifier || identifier.startsWith('/')) {
-      return await reply(msg, BotResponse.Action);
+      return await reply(msg, BotResponse.NoVoiceOrAudio);
     }
 
     const soundExists = await getSoundFromUser(msg.from.id, identifier);

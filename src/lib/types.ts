@@ -15,3 +15,13 @@ export interface ISound {
   type: 'audio' | 'voice';
   identifier: string;
 }
+
+interface IGetSoundOptions {
+  type: 'user' | 'all';
+  identifier: string;
+}
+
+interface IGetAllSoundsOptions {
+  type: 'user' | 'all';
+  limit?: number;
+}

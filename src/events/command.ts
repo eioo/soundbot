@@ -12,6 +12,7 @@ import {
   setUserAction,
   userExists,
 } from '../database';
+import { decrypt, encrypt } from '../lib/encryption';
 import { extractName, parseArgs } from '../lib/telegramHelper';
 
 export function commandHandler() {
@@ -63,8 +64,8 @@ export function commandHandler() {
     }
 
     const response =
-      `🎵 ${listAll ? 'All' : 'Your'} sounds:\n` +
-      sounds.map(({ identifier }, i) => `${i + 1}. ${identifier}`).join('\n');
+      `🎵 *${listAll ? 'All' : 'Your'} sounds*\n` +
+      sounds.map(({ identifier }) => `${identifier}`).join('\n');
 
     await reply(msg, response);
   });
@@ -91,7 +92,22 @@ export function commandHandler() {
     await reply(msg, BotResponse.SoundNotFound);
   });
 
-  bot.onText(/^\/p(lay)? \w+/i, async (msg: Message) => {
+  bot.onText(/^\/export$/i, async (msg: Message) => {
+    /*
+      TODO
+    */
+    if (!msg.from || msg.from.is_bot || msg.chat.type !== 'private') {
+      return;
+    }
+
+    const sounds = await getAllSoundsFromUser(msg.from.id);
+    const json = JSON.stringify(sounds);
+    const encrypted = encrypt(json);
+
+    await reply(msg, encrypted);
+  });
+
+  bot.onText(/^\/p(lay)? \w([\w ]+)?/i, async (msg: Message) => {
     if (!msg.from || msg.from.is_bot) {
       return;
     }

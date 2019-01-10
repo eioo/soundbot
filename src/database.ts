@@ -1,5 +1,5 @@
 import * as Knex from 'knex';
-import { ISound } from './interfaces/types';
+import { ISound, IUser } from './interfaces/types';
 
 export const pg = Knex({
   client: 'pg',
@@ -11,15 +11,20 @@ export const pg = Knex({
   },
 });
 
-export function addUser(userId: number) {
-  return pg('users').insert({
-    id: userId,
-  });
+export async function addUser(userId: number): Promise<IUser> {
+  const user: IUser = await pg('users')
+    .insert({
+      id: userId,
+    })
+    .returning('*')
+    .get(0);
+
+  return user;
 }
 
 export async function userExists(userId: number): Promise<boolean> {
   const result = await pg('users').where('id', userId);
-  return !!result.length;
+  return Boolean(result.length);
 }
 
 export function setUserAction(userId: number, action: string) {
@@ -33,6 +38,11 @@ export async function getUserAction(userId: number): Promise<string> {
     .select('current_action')
     .where({ id: userId })
     .get(0);
+
+  if (!result) {
+    const user = await addUser(userId);
+    return user.current_action;
+  }
 
   return result.current_action;
 }
@@ -61,9 +71,7 @@ export async function getSound(
 ): Promise<ISound | undefined> {
   const result = await pg('sounds')
     .select('*')
-    .where({
-      identifier,
-    });
+    .where({ identifier });
 
   return result[0];
 }

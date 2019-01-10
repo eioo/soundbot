@@ -1,7 +1,7 @@
-interface IUser {
+export interface IUser {
   id: number;
   current_action: string;
-  last_sound?: ISound;
+  last_sound: ISound | {};
 }
 
 export interface ISound {

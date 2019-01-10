@@ -1,4 +1,4 @@
-# 🤖 Soundbot
+# Soundbot
 
 Telegram bot which you can send sound to and share with others.
 

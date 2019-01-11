@@ -8,11 +8,12 @@ import {
   getSoundFromUser,
   getUserAction,
 } from '../database';
+import * as Logger from '../utils/logger';
 import { extractName } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot || !msg.text) {
+    if (!msg.from || msg.from.is_bot || !msg.text || msg.text.startsWith('/')) {
       return;
     }
 
@@ -22,10 +23,9 @@ export function messageHandler() {
       return;
     }
 
-    const lastSound = await getLastSound(msg.from.id);
     const identifier = msg.text.toLowerCase();
 
-    if (!identifier || identifier.startsWith('/')) {
+    if (!identifier) {
       return reply(msg, botResponses.invalidIdentifier);
     }
 
@@ -34,6 +34,8 @@ export function messageHandler() {
     if (soundExists) {
       return reply(msg, botResponses.identifierExists);
     }
+
+    const lastSound = await getLastSound(msg.from.id);
 
     await addSound(msg.from.id, {
       ...lastSound,

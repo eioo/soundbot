@@ -69,7 +69,7 @@ export function commandHandler() {
     await reply(msg, response);
   });
 
-  bot.onText(/^\/(del(ete)?|remove) \w+$/i, async (msg: Message) => {
+  bot.onText(/^\/(del(ete)?|remove) .+$/i, async (msg: Message) => {
     if (!msg.from || msg.from.is_bot) {
       return;
     }

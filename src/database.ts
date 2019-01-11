@@ -139,3 +139,9 @@ export async function deleteSound(identifier: string) {
     .where({ identifier })
     .del();
 }
+
+export async function deleteSoundFromUser(userId: number, identifier: string) {
+  await pg('sounds')
+    .where({ identifier, user_id: userId })
+    .del();
+}

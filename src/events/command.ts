@@ -6,6 +6,7 @@ import {
   addUser,
   clearUserAction,
   deleteSound,
+  deleteSoundFromUser,
   getAllSounds,
   getAllSoundsFromUser,
   getSoundFromUser,
@@ -84,7 +85,7 @@ export function commandHandler() {
     const sound = await getSoundFromUser(msg.from.id, identifier);
 
     if (sound) {
-      await deleteSound(identifier);
+      await deleteSoundFromUser(msg.from.id, identifier);
       return reply(msg, botResponses.soundDeleted);
     }
 

@@ -99,7 +99,13 @@ export async function getSoundFromUser(
 }
 
 export async function getAllSounds(): Promise<ISound[]> {
-  const result = await pg('sounds').select('*');
+  const result = await pg('sounds').select(
+    'identifier',
+    'file_id',
+    'mime_type',
+    'file_size',
+    'type'
+  );
   return result;
 }
 

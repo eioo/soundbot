@@ -3,7 +3,7 @@ import * as Knex from 'knex';
 exports.up = (knex: Knex) => {
   return knex.schema.createTable('users', table => {
     table
-      .bigInteger('id')
+      .bigInteger('user_id')
       .primary()
       .notNullable();
     table.string('current_action').defaultTo('');

@@ -15,6 +15,7 @@ export const botResponses = {
   notEnoughArgs: '🤔 I need more arguments than that',
   soundDeleted: '🤯 Sound was deleted',
   soundNotFound: "🤔 You don't have sound with that name",
+  cancel: 'Sure thing bro.',
   welcome: 'Hello! Type /add to add your own sound',
 };
 

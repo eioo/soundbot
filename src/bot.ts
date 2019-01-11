@@ -11,11 +11,9 @@ if (!botToken) {
 
 export const bot = new TelegramBot(botToken);
 
-export async function startBot() {
+export function startBot() {
   bot.startPolling();
-
   eventHandlers();
-
   Logger.info('Bot running');
 }
 

@@ -5,7 +5,6 @@ import { bot, reply } from '../bot';
 import {
   addUser,
   clearUserAction,
-  deleteSound,
   deleteSoundFromUser,
   getAllSounds,
   getAllSoundsFromUser,
@@ -46,7 +45,7 @@ export function commandHandler() {
     }
 
     await clearUserAction(msg.from.id);
-    await reply(msg, 'Sure thing bro,');
+    await reply(msg, botResponses.cancel);
   });
 
   bot.onText(/^\/list(all)?$/, async (msg: Message) => {

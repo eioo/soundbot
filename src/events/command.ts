@@ -9,7 +9,6 @@ import {
   getAllSounds,
   getAllSoundsFromUser,
   getSoundFromUser,
-  searchSounds,
   setUserAction,
   userExists,
 } from '../database';

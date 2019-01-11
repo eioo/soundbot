@@ -5,7 +5,6 @@ import {
   addSound,
   clearUserAction,
   getSound,
-  getSoundFromUser,
   getUserAction,
   setCurrentSound,
   setUserAction,

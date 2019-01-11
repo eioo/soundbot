@@ -8,7 +8,6 @@ import {
   getSoundFromUser,
   getUserAction,
 } from '../database';
-import * as Logger from '../utils/logger';
 import { extractName } from '../utils/telegramHelper';
 
 export function messageHandler() {

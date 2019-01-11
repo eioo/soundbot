@@ -1,3 +1,4 @@
+import * as levenshtein from 'js-levenshtein';
 import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
@@ -102,14 +103,22 @@ export function commandHandler() {
       return reply(msg, botResponses.notEnoughArgs);
     }
 
-    const identifier = args.join(' ');
-    const sounds = await searchSounds(identifier);
+    const userInput = args.join(' ');
+    const allSounds = await getAllSounds();
 
-    if (!sounds.length) {
+    const allSoundsWithLevenshtein = allSounds
+      .map(({ identifier, ...rest }) => ({
+        identifier,
+        ...rest,
+        distance: levenshtein(identifier, userInput),
+      }))
+      .sort((a, b) => b.distance - a.distance);
+
+    if (allSoundsWithLevenshtein.length === 0) {
       return reply(msg, botResponses.soundNotFound);
     }
 
-    const sound = sounds.find(x => x.identifier === identifier) || sounds[0];
+    const sound = allSoundsWithLevenshtein[0];
 
     const canBeSentAsVoice =
       sound.mime_type === 'audio/ogg' && sound.file_size < Math.pow(10, 6);

@@ -26,7 +26,8 @@ export async function addUser(userId: number): Promise<IUser> {
 }
 
 export async function userExists(userId: number): Promise<boolean> {
-  const result = await pg('users').where({ userId });
+  const { result } = await pg('users').where({ userId });
+
   return Boolean(result.length);
 }
 
@@ -45,17 +46,12 @@ export async function getUserAction(userId: number): Promise<string> {
     await addUser(userId);
   }
 
-  const result = await pg('users')
+  const { currentAction } = await pg('users')
     .select('currentAction')
     .where({ userId })
     .get(0);
 
-  if (!result) {
-    const user = await addUser(userId);
-    return user.current_action;
-  }
-
-  return result.current_action;
+  return currentAction;
 }
 
 export async function clearUserAction(userId: number) {
@@ -69,12 +65,12 @@ export async function setCurrentSound(userId: number, sound: ISound) {
 }
 
 export async function getLastSound(userId: number): Promise<ISound> {
-  const result = await pg('users')
+  const { lastSound } = await pg('users')
     .select('lastSound')
     .where({ userId })
     .get(0);
 
-  return result.last_sound;
+  return lastSound;
 }
 
 export async function getSound(
@@ -111,6 +107,7 @@ export async function getAllSounds(): Promise<ISound[]> {
     'fileSize',
     'type'
   );
+
   return result;
 }
 
@@ -118,7 +115,7 @@ export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
   const result = await pg('sounds')
     .select('*')
     .where({
-      user_id: userId,
+      userId,
     });
 
   return result;

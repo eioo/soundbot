@@ -1,6 +1,10 @@
-import { Message } from 'node-telegram-bot-api';
+import { exec as asyncExec } from 'child_process';
+import * as fs from 'fs';
+import { Message, User } from 'node-telegram-bot-api';
+import * as util from 'util';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
+import config from '../config';
 import {
   addSound,
   clearUserAction,
@@ -10,6 +14,29 @@ import {
 } from '../database';
 import * as Logger from '../utils/logger';
 import { extractName } from '../utils/telegramHelper';
+
+const exec = util.promisify(asyncExec);
+
+async function convertFile(filePath: string) {
+  await exec(`ffmpeg -i "${filePath}" -c:a libopus "${filePath}.opus"`);
+
+  return fs.createReadStream(filePath);
+}
+
+async function deleteFile(filePath: string) {
+  fs.unlink(filePath, err => {
+    if (err) {
+      return Logger.error(`File couldn't be deleted:`, err);
+    }
+
+    Logger.info(`File '${filePath}' removed successfully`);
+  });
+}
+
+async function deleteFiles(filePath: string) {
+  deleteFile(filePath);
+  deleteFile(`${filePath}.opus`);
+}
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
@@ -39,15 +66,42 @@ export function messageHandler() {
 
     const lastSound = await getLastSound(msg.from.id);
 
-    await addSound(msg.from.id, {
-      ...lastSound,
-      identifier,
-    });
+    const filePath = `${config.tempPath}${lastSound.fileId}`;
+    const download = bot.getFileStream(lastSound.fileId);
 
-    await clearUserAction(msg.from.id);
-    await reply(
-      msg,
-      `🥳 ${extractName(msg)}, your sound was added. Type /list to see sounds`
-    );
+    Logger.info(`Streaming audio to ${filePath}`);
+
+    const writeStream = fs.createWriteStream(filePath);
+
+    writeStream.on('open', () => {
+      const pipe = download.pipe(writeStream);
+
+      pipe.on('finish', async () => {
+        Logger.info(`Starting conversion on ${filePath}`);
+
+        const readFileStream = await convertFile(filePath);
+        const fileMessage = await bot.sendVoice(msg.chat.id, readFileStream);
+
+        if (!fileMessage.voice) {
+          throw new Error('There was no voice on sent message');
+        }
+
+        deleteFiles(filePath);
+
+        await addSound((msg.from as User).id, {
+          fileId: fileMessage.voice.file_id,
+          identifier,
+        });
+
+        await clearUserAction((msg.from as User).id);
+
+        await reply(
+          msg,
+          `🥳 ${extractName(
+            msg
+          )}, your sound was added. Type /list to see sounds`
+        );
+      });
+    });
   });
 }

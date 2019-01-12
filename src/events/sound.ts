@@ -1,5 +1,5 @@
 import camelcaseKeys = require('camelcase-keys');
-import { Message } from 'node-telegram-bot-api';
+import { Audio, Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import {
@@ -29,6 +29,13 @@ export function soundHandler() {
       return reply(msg, botResponses.noVoiceOrAudio);
     }
 
+    const fileSize =
+      (msg.voice ? msg.voice.file_size : (msg.audio as Audio).file_size) || 0;
+
+    if (fileSize > Math.pow(10, 6)) {
+      return reply(msg, 'Too big file');
+    }
+
     const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
     const caption = msg.caption as string;
     const useCaption = caption && /\w[\w ]+/.test(caption);
@@ -37,16 +44,12 @@ export function soundHandler() {
       const soundExists = await getSound(caption);
 
       if (soundExists) {
-        await setCurrentSound(msg.from.id, {
-          type: msg.audio ? 'audio' : 'voice',
-          ...sound,
-        });
+        await setCurrentSound(msg.from.id, sound);
         await setUserAction(msg.from.id, userActions.writingName);
         return reply(msg, `🤨 Sound with that name exists, try again below`);
       }
 
       await addSound(msg.from.id, {
-        type: 'audio',
         identifier: msg.caption,
         ...sound,
       });
@@ -57,10 +60,7 @@ export function soundHandler() {
       );
     }
 
-    await setCurrentSound(msg.from.id, {
-      type: msg.audio ? 'audio' : 'voice',
-      ...sound,
-    });
+    await setCurrentSound(msg.from.id, sound);
     await setUserAction(msg.from.id, userActions.writingName);
     reply(
       msg,

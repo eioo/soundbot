@@ -119,17 +119,6 @@ export function commandHandler() {
 
     const sound = allSoundsWithLevenshtein[0];
 
-    const canBeSentAsVoice =
-      sound.mimeType === 'audio/ogg' && sound.fileSize < Math.pow(10, 6);
-
-    if (sound.type === 'voice' || canBeSentAsVoice) {
-      return bot.sendVoice(msg.chat.id, sound.fileId);
-    }
-
-    if (sound.type === 'audio') {
-      return bot.sendAudio(msg.chat.id, sound.fileId);
-    }
-
-    await reply(msg, 'call 911 now');
+    return bot.sendVoice(msg.chat.id, sound.fileId);
   });
 }

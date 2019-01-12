@@ -6,6 +6,7 @@ Telegram bot which you can send sound to and share with others.
 
 - Node.js
 - PostgreSQL database
+- FFmpeg (with _libopus_ codec)
 
 ## Installation & running
 

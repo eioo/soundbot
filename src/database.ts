@@ -1,8 +1,8 @@
-import * as Knex from 'knex';
+import * as knex from 'knex';
 import * as knexStringcase from 'knex-stringcase';
 import { ISound, IUser } from './interfaces/types';
 
-export const pg = Knex(
+export const pg = knex(
   knexStringcase({
     client: 'pg',
     connection: {

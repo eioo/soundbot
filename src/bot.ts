@@ -1,4 +1,6 @@
+import * as fs from 'fs';
 import * as TelegramBot from 'node-telegram-bot-api';
+import config from './config';
 import { eventHandlers } from './events';
 import { EnvError } from './interfaces/customErrors';
 import * as Logger from './utils/logger';
@@ -12,8 +14,10 @@ if (!botToken) {
 export const bot = new TelegramBot(botToken);
 
 export function startBot() {
-  bot.startPolling();
+  createTempDir();
   eventHandlers();
+  bot.startPolling();
+
   Logger.info('Bot running');
 }
 
@@ -25,4 +29,10 @@ export function reply(
     parse_mode: 'Markdown',
     disable_notification: true,
   });
+}
+
+function createTempDir() {
+  if (!fs.existsSync(config.tempPath)) {
+    fs.mkdirSync(config.tempPath);
+  }
 }

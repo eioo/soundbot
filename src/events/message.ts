@@ -24,15 +24,18 @@ async function convertFile(filePath: string) {
   return fs.createReadStream(filePath);
 }
 
-function createTempDir() {
-  if (!fs.existsSync(config.tempPath)) {
-    fs.mkdirSync(config.tempPath);
-  }
-}
-
 function deleteFiles(filePath: string) {
-  fs.unlinkSync(filePath);
-  fs.unlinkSync(`${filePath}.opus`);
+  fs.unlink(filePath, err => {
+    if (err) {
+      Logger.error(err);
+    }
+  });
+
+  fs.unlink(`${filePath}.opus`, err => {
+    if (err) {
+      Logger.error(err);
+    }
+  });
 }
 
 export function messageHandler() {
@@ -65,7 +68,6 @@ export function messageHandler() {
     const filePath = path.join(config.tempPath, lastSound.fileId);
     const download = bot.getFileStream(lastSound.fileId);
 
-    createTempDir();
     Logger.info(`Streaming audio to ${filePath}`);
 
     const writeStream = fs.createWriteStream(filePath);

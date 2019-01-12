@@ -97,7 +97,7 @@ export function messageHandler() {
           msg,
           `🥳 ${extractName(
             msg
-          )}, your sound was added. Type /list to see sounds`
+          )}, your sound was added.\n/list to see your sounds\n/listall to see all sounds`
         );
       });
     });

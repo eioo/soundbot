@@ -1,15 +1,16 @@
 import * as knex from 'knex';
 import knexStringcase = require('knex-stringcase');
+import config from './config';
 import { ISound, IUser } from './interfaces/types';
 
 export const pg = knex(
   knexStringcase({
     client: 'pg',
     connection: {
-      host: process.env.POSTGRES_HOST,
-      database: process.env.POSTGRES_DATABASE,
-      user: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
+      host: config.db.host,
+      database: config.db.database,
+      user: config.db.user,
+      password: config.db.password,
     },
   })
 );
@@ -100,13 +101,7 @@ export async function getSoundFromUser(
 }
 
 export async function getAllSounds(): Promise<ISound[]> {
-  const result = await pg('sounds').select(
-    'identifier',
-    'fileId',
-    'mimeType',
-    'fileSize',
-    'type'
-  );
+  const result = await pg('sounds').select('identifier', 'fileId');
 
   return result;
 }

@@ -8,12 +8,15 @@ const YELLOW = '\x1b[33m';
 function log(
   name: string,
   color: string,
+  isError: boolean,
   data?: any,
   ...optionalParams: any[]
 ) {
   const date = new Date().toLocaleString();
 
-  console.log(
+  const loggingFunction = isError ? console.error : console.log;
+
+  loggingFunction(
     `${BRIGHT}${color}${name}${RESET}] ${BLUE}${date}${RESET}`,
     data,
     ...optionalParams
@@ -21,9 +24,13 @@ function log(
 }
 
 export function info(data?: any, ...optionalParams: any[]) {
-  log('INFO', CYAN, data, ...optionalParams);
+  log('INFO', CYAN, false, data, ...optionalParams);
 }
 
 export function message(data?: any, ...optionalParams: any[]) {
-  log('MSG', YELLOW, data, ...optionalParams);
+  log('MSG', YELLOW, false, data, ...optionalParams);
+}
+
+export function error(data?: any, ...optionalParams: any[]) {
+  log('MSG', YELLOW, true, data, ...optionalParams);
 }

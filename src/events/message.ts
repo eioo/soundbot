@@ -24,19 +24,15 @@ async function convertFile(filePath: string) {
   return fs.createReadStream(filePath);
 }
 
-async function deleteFile(filePath: string) {
-  fs.unlink(filePath, err => {
-    if (err) {
-      return Logger.error(`File couldn't be deleted:`, err);
-    }
-
-    Logger.info(`File '${filePath}' removed successfully`);
-  });
+function createTempDir() {
+  if (!fs.existsSync(config.tempPath)) {
+    fs.mkdirSync(config.tempPath);
+  }
 }
 
-async function deleteFiles(filePath: string) {
-  deleteFile(filePath);
-  deleteFile(`${filePath}.opus`);
+function deleteFiles(filePath: string) {
+  fs.unlinkSync(filePath);
+  fs.unlinkSync(`${filePath}.opus`);
 }
 
 export function messageHandler() {
@@ -66,10 +62,10 @@ export function messageHandler() {
     }
 
     const lastSound = await getLastSound(msg.from.id);
-
     const filePath = path.join(config.tempPath, lastSound.fileId);
     const download = bot.getFileStream(lastSound.fileId);
 
+    createTempDir();
     Logger.info(`Streaming audio to ${filePath}`);
 
     const writeStream = fs.createWriteStream(filePath);
@@ -87,6 +83,7 @@ export function messageHandler() {
           throw new Error('There was no voice on sent message');
         }
 
+        Logger.info(`Finished conversion on ${filePath}`);
         deleteFiles(filePath);
 
         await addSound((msg.from as User).id, {

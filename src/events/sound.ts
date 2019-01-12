@@ -37,6 +37,8 @@ export function soundHandler() {
     }
 
     const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
+
+    /*
     const caption = msg.caption as string;
     const useCaption = caption && /\w[\w ]+/.test(caption);
 
@@ -50,15 +52,17 @@ export function soundHandler() {
       }
 
       await addSound(msg.from.id, {
-        identifier: msg.caption,
-        ...sound,
+        identifier: caption,
+        fileId: sound.fileId,
       });
+
       await clearUserAction(msg.from.id);
       return reply(
         msg,
         `🥳 ${extractName(msg)}, your sound was added. Type /list to see sounds`
       );
     }
+    */
 
     await setCurrentSound(msg.from.id, sound);
     await setUserAction(msg.from.id, userActions.writingName);

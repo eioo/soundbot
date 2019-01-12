@@ -4,6 +4,7 @@
   "main": "app.ts",
   "license": "MIT",
   "scripts": {
+    "rollback": "knex migrate:rollback",
     "migrate": "knex migrate:latest",
     "dev": "ts-node-dev --transpileOnly --respawn src/index.ts",
     "test": "jest",

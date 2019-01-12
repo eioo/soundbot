@@ -31,13 +31,13 @@ export async function userExists(userId: number): Promise<boolean> {
   return Boolean(result.length);
 }
 
-export async function setUserAction(userId: number, action: string) {
+export async function setUserAction(userId: number, currentAction: string) {
   if (!(await userExists(userId))) {
     await addUser(userId);
   }
 
   return pg('users')
-    .update('currentAction', action)
+    .update({ currentAction })
     .where({ userId });
 }
 

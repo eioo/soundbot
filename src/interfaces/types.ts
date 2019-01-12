@@ -1,18 +1,18 @@
 export interface IUser {
   id: number;
-  current_action: string;
-  last_sound: ISound | {};
+  currentAction: string;
+  lastSound: ISound | {};
 }
 
 export interface ISound {
-  user_id?: number;
-  file_id: string;
+  userId?: number;
+  fileId: string;
   duration: number;
-  mime_type?: string;
+  mimeType?: string;
   title?: string;
   performer?: string;
-  created_at?: string;
+  createdAt?: string;
   type: 'audio' | 'voice';
   identifier: string;
-  file_size: number;
+  fileSize: number;
 }

@@ -1,6 +1,8 @@
 // Read process.env only through this file!
 
 import * as dotenv from 'dotenv';
+import * as path from 'path';
+
 dotenv.config();
 
 export default {
@@ -11,5 +13,5 @@ export default {
     password: process.env.POSTGRES_PASSWORD || 'postgres',
   },
   botToken: process.env.BOT_TOKEN,
-  tempPath: './temp/',
+  tempPath: path.join(__dirname, '../temp'),
 };

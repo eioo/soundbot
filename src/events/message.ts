@@ -1,6 +1,7 @@
 import { exec as asyncExec } from 'child_process';
 import * as fs from 'fs';
 import { Message, User } from 'node-telegram-bot-api';
+import * as path from 'path';
 import * as util from 'util';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
@@ -66,7 +67,7 @@ export function messageHandler() {
 
     const lastSound = await getLastSound(msg.from.id);
 
-    const filePath = `${config.tempPath}${lastSound.fileId}`;
+    const filePath = path.join(config.tempPath, lastSound.fileId);
     const download = bot.getFileStream(lastSound.fileId);
 
     Logger.info(`Streaming audio to ${filePath}`);

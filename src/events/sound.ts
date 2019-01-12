@@ -1,3 +1,4 @@
+import camelcaseKeys = require('camelcase-keys');
 import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
@@ -14,7 +15,7 @@ import { extractName } from '../utils/telegramHelper';
 
 export function soundHandler() {
   const listener = async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -28,7 +29,7 @@ export function soundHandler() {
       return reply(msg, botResponses.noVoiceOrAudio);
     }
 
-    const sound = (msg.voice || msg.audio) as ISound;
+    const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
     const caption = msg.caption as string;
     const useCaption = caption && /\w[\w ]+/.test(caption);
 

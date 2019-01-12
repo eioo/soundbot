@@ -15,7 +15,7 @@ export function messageHandler() {
   bot.on('message', async (msg: Message) => {
     Logger.message(`\n`, msg);
 
-    if (!msg.from || msg.from.is_bot || !msg.text || msg.text.startsWith('/')) {
+    if (!msg.from || !msg.text || msg.text.startsWith('/')) {
       return;
     }
 

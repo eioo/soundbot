@@ -1,5 +1,5 @@
 import * as knex from 'knex';
-import * as knexStringcase from 'knex-stringcase';
+import knexStringcase = require('knex-stringcase');
 import { ISound, IUser } from './interfaces/types';
 
 export const pg = knex(
@@ -31,13 +31,13 @@ export async function userExists(userId: number): Promise<boolean> {
   return Boolean(result.length);
 }
 
-export async function setUserAction(userId: number, currentAction: string) {
+export async function setUserAction(userId: number, action: string) {
   if (!(await userExists(userId))) {
     await addUser(userId);
   }
 
   return pg('users')
-    .update({ currentAction })
+    .update('currentAction', action)
     .where({ userId });
 }
 

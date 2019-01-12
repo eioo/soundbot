@@ -16,7 +16,7 @@ import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -24,7 +24,7 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/add(sound)?$/i, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -40,7 +40,7 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -49,7 +49,7 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/list(all)?$/, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -70,7 +70,7 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/(del(ete)?|remove) .+$/i, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 
@@ -92,7 +92,7 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/p(lay)? \w([\w ]+)?/i, async (msg: Message) => {
-    if (!msg.from || msg.from.is_bot) {
+    if (!msg.from) {
       return;
     }
 

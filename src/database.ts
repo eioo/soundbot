@@ -26,7 +26,7 @@ export async function addUser(userId: number): Promise<IUser> {
 }
 
 export async function userExists(userId: number): Promise<boolean> {
-  const { result } = await pg('users').where({ userId });
+  const result = await pg('users').where({ userId });
 
   return Boolean(result.length);
 }

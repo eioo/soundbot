@@ -13,7 +13,7 @@ import { extractName } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
-    Logger.info(`\n`, msg);
+    Logger.message(`\n`, msg);
 
     if (!msg.from || msg.from.is_bot || !msg.text || msg.text.startsWith('/')) {
       return;

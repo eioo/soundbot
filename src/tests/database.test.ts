@@ -1,13 +1,13 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-import { pg } from '../database';
+import { knex } from '../database';
 
 it('connects to database', async () => {
-  await pg.raw('select 1+1 as result');
+  await knex.raw('select 1+1 as result');
   expect(true).toBe(true);
 });
 
 afterAll(() => {
-  pg.destroy();
+  knex.destroy();
 });

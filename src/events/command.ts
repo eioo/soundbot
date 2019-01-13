@@ -16,18 +16,10 @@ import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     await reply(msg, botResponses.welcome);
   });
 
   bot.onText(/^\/add(sound)?$/i, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     if (!(await userExists(msg))) {
       await addUser(msg);
     }
@@ -40,19 +32,11 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     await clearUserAction(msg);
     await reply(msg, botResponses.cancel);
   });
 
   bot.onText(/^\/list(all)?$/, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     const listAll = (msg.text || '').endsWith('all');
     const sounds = listAll
       ? await getAllSounds()
@@ -70,10 +54,6 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/(del(ete)?|remove) .+$/i, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     const args = parseArgs(msg);
 
     if (!args.length) {
@@ -92,10 +72,6 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/p(lay)? \w([\w ]+)?/i, async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
-
     const args = (msg.text || '').split(' ').slice(1);
 
     if (!args.length) {

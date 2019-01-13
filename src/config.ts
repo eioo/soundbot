@@ -12,6 +12,6 @@ export default {
     user: process.env.POSTGRES_USER || 'postgres',
     password: process.env.POSTGRES_PASSWORD || 'postgres',
   },
-  botToken: process.env.BOT_TOKEN,
+  botToken: process.env.BOT_TOKEN || '',
   tempPath: os.tmpdir(),
 };

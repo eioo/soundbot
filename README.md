@@ -37,3 +37,7 @@ npm run start
 | PG_DATABASE | PostgreSQL database name |
 | PG_USER     | PostgreSQL username      |
 | PG_PASSWORD | PostgreSQL password      |
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details

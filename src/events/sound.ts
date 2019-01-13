@@ -2,26 +2,18 @@ import camelcaseKeys = require('camelcase-keys');
 import { Audio, Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
-import {
-  addSound,
-  clearUserAction,
-  getSound,
-  getUserAction,
-  setCurrentSound,
-  setUserAction,
-} from '../database';
+import { getUserState, setCurrentSound, setUserAction } from '../database';
 import { ISound } from '../interfaces/types';
 import { extractName } from '../utils/telegramHelper';
 
 export function soundHandler() {
   const listener = async (msg: Message) => {
-    if (!msg.from) {
-      return;
-    }
+    const { currentAction, currentChatId } = await getUserState(msg);
+    const correctUserState =
+      currentAction === userActions.sendingSound ||
+      currentChatId === msg.chat.id;
 
-    const currentAction = await getUserAction(msg.from.id);
-
-    if (currentAction !== userActions.sendingSound) {
+    if (!correctUserState) {
       return;
     }
 
@@ -37,35 +29,8 @@ export function soundHandler() {
     }
 
     const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
-
-    /*
-    const caption = msg.caption as string;
-    const useCaption = caption && /\w[\w ]+/.test(caption);
-
-    if (useCaption) {
-      const soundExists = await getSound(caption);
-
-      if (soundExists) {
-        await setCurrentSound(msg.from.id, sound);
-        await setUserAction(msg.from.id, userActions.writingName);
-        return reply(msg, `🤨 Sound with that name exists, try again below`);
-      }
-
-      await addSound(msg.from.id, {
-        identifier: caption,
-        fileId: sound.fileId,
-      });
-
-      await clearUserAction(msg.from.id);
-      return reply(
-        msg,
-        `🥳 ${extractName(msg)}, your sound was added. Type /list to see sounds`
-      );
-    }
-    */
-
-    await setCurrentSound(msg.from.id, sound);
-    await setUserAction(msg.from.id, userActions.writingName);
+    await setCurrentSound(msg, sound);
+    await setUserAction(msg, userActions.writingName);
     reply(
       msg,
       `🤩 Thank you ${extractName(msg)}! What name would you want for it?`

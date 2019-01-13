@@ -6,7 +6,8 @@ exports.up = (knex: Knex) => {
       .bigInteger('user_id')
       .primary()
       .notNullable();
-    table.string('current_action').defaultTo('');
+    table.string('current_action').nullable();
+    table.bigInteger('current_chat_id').nullable();
     table
       .jsonb('last_sound')
       .defaultTo('{}')

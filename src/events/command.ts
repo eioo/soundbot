@@ -28,11 +28,11 @@ export function commandHandler() {
       return;
     }
 
-    if (!(await userExists(msg.from.id))) {
-      await addUser(msg.from.id);
+    if (!(await userExists(msg))) {
+      await addUser(msg);
     }
 
-    await setUserAction(msg.from.id, userActions.sendingSound);
+    await setUserAction(msg, userActions.sendingSound);
     await reply(
       msg,
       `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`
@@ -44,7 +44,7 @@ export function commandHandler() {
       return;
     }
 
-    await clearUserAction(msg.from.id);
+    await clearUserAction(msg);
     await reply(msg, botResponses.cancel);
   });
 
@@ -56,7 +56,7 @@ export function commandHandler() {
     const listAll = (msg.text || '').endsWith('all');
     const sounds = listAll
       ? await getAllSounds()
-      : await getAllSoundsFromUser(msg.from.id);
+      : await getAllSoundsFromUser(msg);
 
     if (!sounds.length) {
       return reply(msg, botResponses.noSoundsYet);
@@ -81,10 +81,10 @@ export function commandHandler() {
     }
 
     const identifier = args.join(' ');
-    const sound = await getSoundFromUser(msg.from.id, identifier);
+    const sound = await getSoundFromUser(msg, identifier);
 
     if (sound) {
-      await deleteSoundFromUser(msg.from.id, identifier);
+      await deleteSoundFromUser(msg, identifier);
       return reply(msg, botResponses.soundDeleted);
     }
 

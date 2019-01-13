@@ -1,9 +1,14 @@
-import * as knex from 'knex';
+import * as Knex from 'knex';
 import knexStringcase = require('knex-stringcase');
+import { Message, User } from 'node-telegram-bot-api';
+import * as pg from 'pg';
 import config from './config';
-import { ISound, IUser } from './interfaces/types';
+import { ISound, IUser, IUserAction } from './interfaces/types';
 
-export const pg = knex(
+const PG_BIGINT = 20;
+pg.types.setTypeParser(PG_BIGINT, parseFloat);
+
+export const knex = Knex(
   knexStringcase({
     client: 'pg',
     connection: {
@@ -15,8 +20,9 @@ export const pg = knex(
   })
 );
 
-export async function addUser(userId: number): Promise<IUser> {
-  const user: IUser = await pg('users')
+export async function addUser(msg: Message): Promise<IUser> {
+  const userId = (msg.from as User).id;
+  const user: IUser = await knex('users')
     .insert({
       userId,
     })
@@ -26,47 +32,61 @@ export async function addUser(userId: number): Promise<IUser> {
   return user;
 }
 
-export async function userExists(userId: number): Promise<boolean> {
-  const result = await pg('users').where({ userId });
+export async function userExists(msg: Message): Promise<boolean> {
+  const userId = (msg.from as User).id;
+  const result = await knex('users').where({ userId });
 
   return Boolean(result.length);
 }
 
-export async function setUserAction(userId: number, action: string) {
-  if (!(await userExists(userId))) {
-    await addUser(userId);
+export async function setUserAction(msg: Message, action?: string) {
+  const userId = (msg.from as User).id;
+
+  if (!(await userExists(msg))) {
+    await addUser(msg);
   }
 
-  return pg('users')
-    .update('currentAction', action)
+  return knex('users')
+    .update({
+      currentAction: action || null,
+      currentChatId: action ? msg.chat.id : null,
+    })
     .where({ userId });
 }
 
-export async function getUserAction(userId: number): Promise<string> {
-  if (!(await userExists(userId))) {
-    await addUser(userId);
+export async function getUserState(msg: Message): Promise<IUserAction> {
+  if (!(await userExists(msg))) {
+    await addUser(msg);
   }
 
-  const { currentAction } = await pg('users')
-    .select('currentAction')
+  const userId = (msg.from as User).id;
+
+  const { currentAction, currentChatId } = await knex('users')
+    .select('currentAction', 'currentChatId')
     .where({ userId })
     .get(0);
 
-  return currentAction;
+  return {
+    currentAction,
+    currentChatId,
+  };
 }
 
-export async function clearUserAction(userId: number) {
-  return setUserAction(userId, '');
+export async function clearUserAction(msg: Message) {
+  return setUserAction(msg);
 }
 
-export async function setCurrentSound(userId: number, sound: ISound) {
-  return pg('users')
+export async function setCurrentSound(msg: Message, sound: ISound) {
+  const userId = (msg.from as User).id;
+
+  return knex('users')
     .update('lastSound', JSON.stringify(sound))
     .where({ userId });
 }
 
-export async function getLastSound(userId: number): Promise<ISound> {
-  const { lastSound } = await pg('users')
+export async function getLastSound(msg: Message): Promise<ISound> {
+  const userId = (msg.from as User).id;
+  const { lastSound } = await knex('users')
     .select('lastSound')
     .where({ userId })
     .get(0);
@@ -77,7 +97,7 @@ export async function getLastSound(userId: number): Promise<ISound> {
 export async function getSound(
   identifier: string
 ): Promise<ISound | undefined> {
-  const result = await pg('sounds')
+  const result = await knex('sounds')
     .select('*')
     .where({ identifier })
     .get(0);
@@ -86,10 +106,12 @@ export async function getSound(
 }
 
 export async function getSoundFromUser(
-  userId: number,
+  msg: Message,
   identifier: string
 ): Promise<ISound | undefined> {
-  const result = await pg('sounds')
+  const userId = (msg.from as User).id;
+
+  const result = await knex('sounds')
     .select('*')
     .where({
       userId,
@@ -101,13 +123,14 @@ export async function getSoundFromUser(
 }
 
 export async function getAllSounds(): Promise<ISound[]> {
-  const result = await pg('sounds').select('identifier', 'fileId');
+  const result = await knex('sounds').select('identifier', 'fileId');
 
   return result;
 }
 
-export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
-  const result = await pg('sounds')
+export async function getAllSoundsFromUser(msg: Message): Promise<ISound[]> {
+  const userId = (msg.from as User).id;
+  const result = await knex('sounds')
     .select('*')
     .where({
       userId,
@@ -116,21 +139,25 @@ export async function getAllSoundsFromUser(userId: number): Promise<ISound[]> {
   return result;
 }
 
-export async function addSound(userId: number, sound: ISound) {
-  await pg('sounds').insert({
+export async function addSound(msg: Message, sound: ISound) {
+  const userId = (msg.from as User).id;
+
+  await knex('sounds').insert({
     ...sound,
     userId,
   });
 }
 
 export async function deleteSound(identifier: string) {
-  await pg('sounds')
+  await knex('sounds')
     .where({ identifier })
     .del();
 }
 
-export async function deleteSoundFromUser(userId: number, identifier: string) {
-  await pg('sounds')
+export async function deleteSoundFromUser(msg: Message, identifier: string) {
+  const userId = (msg.from as User).id;
+
+  await knex('sounds')
     .where({ identifier, userId })
     .del();
 }

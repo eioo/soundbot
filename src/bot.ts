@@ -14,7 +14,6 @@ if (!botToken) {
 export const bot = new TelegramBot(botToken);
 
 export function startBot() {
-  createTempDir();
   eventHandlers();
   bot.startPolling();
 
@@ -29,10 +28,4 @@ export function reply(
     parse_mode: 'Markdown',
     disable_notification: true,
   });
-}
-
-function createTempDir() {
-  if (!fs.existsSync(config.tempPath)) {
-    fs.mkdirSync(config.tempPath);
-  }
 }

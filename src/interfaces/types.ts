@@ -1,12 +1,17 @@
 export interface IUser {
   id: number;
-  currentAction: string;
+  currentAction?: string;
+  currentChatId?: number;
   lastSound: ISound | {};
 }
 
 export interface ISound {
   fileId: string;
-  title?: string;
   identifier: string;
   createdAt?: string;
+}
+
+export interface IUserAction {
+  currentAction: string | null;
+  currentChatId: number | null;
 }

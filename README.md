@@ -10,7 +10,7 @@ Telegram bot which you can send sound to and share with others.
 
 ## Installation & running
 
-❗️ Make sure to set your bot's **Privacy mode** to **enabled** with @BotFather
+❗️ If you want to use groups make sure to set your bot's **Privacy mode** to **enabled** with @BotFather
 
 1. Make copy of `.env.example` to `.env` and config it.
 2. Run following commands:

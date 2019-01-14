@@ -87,7 +87,7 @@ export function commandHandler() {
         ...rest,
         distance: levenshtein(identifier, userInput),
       }))
-      .sort((a, b) => b.distance - a.distance);
+      .sort((a, b) => a.distance - b.distance);
 
     if (allSoundsWithLevenshtein.length === 0) {
       return reply(msg, botResponses.soundNotFound);

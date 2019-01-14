@@ -34,4 +34,15 @@ describe('Telegram bot tests', () => {
     );
     expect(data.text).toBe(botResponses.soundNotFound);
   });
+
+  test('add and cancel command', async () => {
+    const telegramTest = new TelegramTest(bot);
+    const cmdResponse = await telegramTest.sendUpdate(testChat, '/add');
+
+    expect(cmdResponse.text).toMatch(/.+please send\/record your sound.+/i);
+
+    const cancelResponse = await telegramTest.sendUpdate(testChat, '/cancel');
+
+    expect(cancelResponse.text).toBe(botResponses.cancel);
+  });
 });

@@ -1,13 +1,11 @@
+import { areWeTestingWithJest } from './jestCheck';
+
 /* tslint:disable:no-console */
 const RESET = '\x1b[0m';
 const BRIGHT = '[\x1b[1m';
 const CYAN = '\x1b[36m';
 const BLUE = '\x1b[34m';
 const YELLOW = '\x1b[33m';
-
-function areWeTestingWithJest() {
-  return process.env.JEST_WORKER_ID !== undefined;
-}
 
 function log(
   name: string,

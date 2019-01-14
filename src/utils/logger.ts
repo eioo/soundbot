@@ -5,6 +5,10 @@ const CYAN = '\x1b[36m';
 const BLUE = '\x1b[34m';
 const YELLOW = '\x1b[33m';
 
+function areWeTestingWithJest() {
+  return process.env.JEST_WORKER_ID !== undefined;
+}
+
 function log(
   name: string,
   color: string,
@@ -12,8 +16,11 @@ function log(
   data?: any,
   ...optionalParams: any[]
 ) {
-  const date = new Date().toLocaleString();
+  if (areWeTestingWithJest()) {
+    return;
+  }
 
+  const date = new Date().toLocaleString();
   const loggingFunction = isError ? console.error : console.log;
 
   loggingFunction(

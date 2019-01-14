@@ -537,7 +537,7 @@ bl@^1.2.1:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-bluebird@^3.5.0, bluebird@^3.5.1:
+bluebird@^3.5.0, bluebird@^3.5.1, bluebird@^3.5.2:
   version "3.5.3"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.3.tgz#7d01c6f9616c9a51ab0f8c549a79dfe6ec33efa7"
   integrity sha512-/qKPUQlaW1OyR51WeCPBvRnAlnZFUJkCSG5HzGnuIqhgyJtF+T94lFnn33eiazjRm2LAHVy2guNnaq48X9SJuw==
@@ -4261,6 +4261,13 @@ tarn@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/tarn/-/tarn-1.1.4.tgz#aeeb85964b1afa0bbf381359c1167df237c27b6a"
   integrity sha512-j4samMCQCP5+6Il9/cxCqBd3x4vvlLeVdoyGex0KixPKl4F8LpNbDSC6NDhjianZgUngElRr9UI1ryZqJDhwGg==
+
+telegram-test@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/telegram-test/-/telegram-test-0.1.7.tgz#16495a739913c05f8fbca9d170c028119344927b"
+  integrity sha512-ENwsCV1xEc2M6NKPXGMQoyx5/pCsPQVt/I6hO+xeRXIZrUpcYapnzHNJXLSvATLN92Oah51bywBCcju7Kq1jGQ==
+  dependencies:
+    bluebird "^3.5.2"
 
 test-exclude@^4.2.1:
   version "4.2.3"

@@ -1,17 +1,29 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
-process.env.NTBA_FIX_319 = '😋';
+import TelegramTest = require('telegram-test');
+import { initialize } from '..';
+import { bot } from '../bot';
+import { botResponses } from '../events';
 
-import * as TelegramBot from 'node-telegram-bot-api';
-import { EnvError } from '../interfaces/customErrors';
+initialize();
 
-const botToken = process.env.TEST_BOT_TOKEN;
+describe('Tellu testi', () => {
+  const testChat = 1;
 
-if (!botToken) {
-  throw new EnvError('No TEST_BOT_TOKEN in .env');
-}
+  test('start command', async () => {
+    const telegramTest = new TelegramTest(bot);
+    const data = await telegramTest.sendUpdate(testChat, '/start');
 
-(async () => {
-  const bot = new TelegramBot(botToken);
-  bot.startPolling();
-})();
+    expect(data.text).toBe(botResponses.welcome);
+  });
+
+  test('list command', async () => {
+    const telegramTest = new TelegramTest(bot);
+    const data = await telegramTest.sendUpdate(testChat, '/list');
+    expect(typeof data.text === 'string').toBeTruthy();
+  });
+
+  test('listall command', async () => {
+    const telegramTest = new TelegramTest(bot);
+    const data = await telegramTest.sendUpdate(testChat, '/listall');
+    expect(typeof data.text === 'string').toBeTruthy();
+  });
+});

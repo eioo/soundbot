@@ -4,7 +4,7 @@ import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import { getUserState, setCurrentSound, setUserAction } from '../database';
 import { ISound } from '../interfaces/types';
-import { extractName } from '../utils/telegramHelper';
+import { createSound, extractName } from '../utils/telegramHelper';
 
 export function soundHandler() {
   const listener = async (msg: Message) => {
@@ -29,6 +29,12 @@ export function soundHandler() {
     }
 
     const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
+
+    if (msg.caption) {
+      createSound(msg, sound.fileId, msg.caption);
+      return;
+    }
+
     await setCurrentSound(msg, sound);
     await setUserAction(msg, userActions.writingName);
     reply(

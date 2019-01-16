@@ -2,8 +2,9 @@ import * as fs from 'fs';
 import { Message, User } from 'node-telegram-bot-api';
 import * as path from 'path';
 import { performance } from 'perf_hooks';
-import { bot } from '../bot';
+import { bot, reply } from '../bot';
 import config from '../config';
+import { addSound, clearUserAction } from '../database';
 import * as Logger from '../utils/logger';
 import { convertFileToOpus, deleteFiles } from './ffmpegHelper';
 
@@ -16,6 +17,27 @@ export function parseArgs(msg: Message) {
   return (msg.text || '').split(' ').slice(1);
 }
 
+export async function createSound(
+  msg: Message,
+  fileId: string,
+  identifier: string
+) {
+  const voiceId = await getVoiceIdFromAudioId(fileId, msg.chat.id);
+
+  await addSound(msg, {
+    fileId: voiceId,
+    identifier,
+  });
+
+  await clearUserAction(msg);
+
+  await reply(
+    msg,
+    `🥳 ${extractName(
+      msg
+    )}, your sound was added.\n/list to see your sounds\n/listall to see all sounds`
+  );
+}
 export async function getVoiceIdFromAudioId(
   audioId: string,
   chatId: number

@@ -9,7 +9,11 @@ import {
   getUserState,
 } from '../database';
 import * as Logger from '../utils/logger';
-import { extractName, getVoiceIdFromAudioId } from '../utils/telegramHelper';
+import {
+  createSound,
+  extractName,
+  getVoiceIdFromAudioId,
+} from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
@@ -41,20 +45,6 @@ export function messageHandler() {
     }
 
     const lastSound = await getLastSound(msg);
-    const voiceId = await getVoiceIdFromAudioId(lastSound.fileId, msg.chat.id);
-
-    await addSound(msg, {
-      fileId: voiceId,
-      identifier,
-    });
-
-    await clearUserAction(msg);
-
-    await reply(
-      msg,
-      `🥳 ${extractName(
-        msg
-      )}, your sound was added.\n/list to see your sounds\n/listall to see all sounds`
-    );
+    createSound(msg, lastSound.fileId, identifier);
   });
 }

@@ -31,8 +31,7 @@ export function soundHandler() {
     const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
 
     if (msg.caption) {
-      createSound(msg, sound.fileId, msg.caption);
-      return;
+      return createSound(msg, sound.fileId, msg.caption);
     }
 
     await setCurrentSound(msg, sound);

@@ -1,4 +1,4 @@
-import * as levenshtein from 'js-levenshtein';
+import * as fuzzysort from 'fuzzysort';
 import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
@@ -80,21 +80,16 @@ export function commandHandler() {
 
     const userInput = args.join(' ');
     const allSounds = await getAllSounds();
+    const results = fuzzysort.go(userInput, allSounds, {
+      key: 'identifier',
+      limit: 1,
+    });
 
-    const allSoundsWithLevenshtein = allSounds
-      .map(({ identifier, ...rest }) => ({
-        identifier,
-        ...rest,
-        distance: levenshtein(identifier, userInput),
-      }))
-      .sort((a, b) => a.distance - b.distance);
-
-    if (allSoundsWithLevenshtein.length === 0) {
+    if (!results.length) {
       return reply(msg, botResponses.soundNotFound);
     }
 
-    const sound = allSoundsWithLevenshtein[0];
-
-    return bot.sendVoice(msg.chat.id, sound.fileId);
+    const { fileId } = results[0].obj;
+    return bot.sendVoice(msg.chat.id, fileId);
   });
 }

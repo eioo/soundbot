@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Message } from 'node-telegram-bot-api';
+import { Message, User } from 'node-telegram-bot-api';
 import * as path from 'path';
 import { bot } from '../bot';
 import config from '../config';
@@ -7,11 +7,8 @@ import * as Logger from '../utils/logger';
 import { convertFileToOpus, deleteFiles } from './ffmpegHelper';
 
 export function extractName(msg: Message) {
-  if (!msg.from) {
-    return '';
-  }
-
-  return `${msg.from.first_name || ''} ${msg.from.last_name || ''}`;
+  const user = msg.from as User;
+  return `${user.first_name || ''} ${user.last_name || ''}`.trim();
 }
 
 export function parseArgs(msg: Message) {

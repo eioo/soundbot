@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { Message, User } from 'node-telegram-bot-api';
 import * as path from 'path';
+import { performance } from 'perf_hooks';
 import { bot } from '../bot';
 import config from '../config';
 import * as Logger from '../utils/logger';
@@ -20,17 +21,20 @@ export async function getVoiceIdFromAudioId(
   chatId: number
 ): Promise<string> {
   return new Promise((resolve, reject) => {
+    Logger.info(`Beginning pipeline for ${audioId}`);
+    const t1 = performance.now();
+
     const download = bot.getFileStream(audioId);
     const filePath = path.join(config.tempPath, audioId);
 
-    Logger.info(`Streaming audio to ${filePath}`);
+    Logger.info(`-> Streaming audio to ${filePath}`);
     const writeStream = fs.createWriteStream(filePath);
 
     writeStream.on('open', () => {
       const pipe = download.pipe(writeStream);
 
       pipe.on('finish', async () => {
-        Logger.info(`Starting conversion on ${filePath}`);
+        Logger.info(`-> Starting conversion on ${filePath}`);
 
         const readFileStream = await convertFileToOpus(filePath);
         const fileMessage = await bot.sendVoice(chatId, readFileStream);
@@ -41,6 +45,10 @@ export async function getVoiceIdFromAudioId(
         }
 
         deleteFiles(filePath);
+
+        const t2 = performance.now();
+        Logger.info(`Ended pipeline for ${audioId} in ${t2 - t1} ms`);
+
         resolve(fileMessage.voice.file_id);
       });
     });

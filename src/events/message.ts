@@ -1,5 +1,4 @@
-import { Message, User } from 'node-telegram-bot-api';
-import { performance } from 'perf_hooks';
+import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
 import {
@@ -42,12 +41,7 @@ export function messageHandler() {
     }
 
     const lastSound = await getLastSound(msg);
-
-    Logger.info(`Beginning pipeline for ${lastSound.fileId}`);
-    const t1 = performance.now();
     const voiceId = await getVoiceIdFromAudioId(lastSound.fileId, msg.chat.id);
-    const t2 = performance.now();
-    Logger.info(`Ended pipeline for ${lastSound.fileId} in ${t2 - t1} ms`);
 
     await addSound(msg, {
       fileId: voiceId,

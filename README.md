@@ -30,13 +30,15 @@ npm run start
 
 ## Environment variables
 
-| Key         | Explanation              |
-| ----------- | ------------------------ |
-| BOT_TOKEN   | Your Telegram bot token  |
-| PG_HOST     | PostgreSQL host          |
-| PG_DATABASE | PostgreSQL database name |
-| PG_USER     | PostgreSQL username      |
-| PG_PASSWORD | PostgreSQL password      |
+| Key            | Explanation                 |
+| -------------- | --------------------------- |
+| BOT_TOKEN      | Your Telegram bot token     |
+| PG_HOST        | PostgreSQL host             |
+| PG_DATABASE    | PostgreSQL database name    |
+| PG_USER        | PostgreSQL username         |
+| PG_PASSWORD    | PostgreSQL password         |
+| TEST_BOT_TOKEN | Bot token for running tests |
+| TEST_CHAT_ID   | Chat ID to run tests on     |
 
 ## License
 

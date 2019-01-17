@@ -7,6 +7,7 @@ import config from '../config';
 import { addSound, clearUserAction } from '../database';
 import * as Logger from '../utils/logger';
 import { convertFileToOpus, deleteFiles } from './ffmpegHelper';
+import { areWeTestingWithJest } from './jestCheck';
 
 export function extractName(msg: Message) {
   const user = msg.from as User;
@@ -17,31 +18,47 @@ export function parseArgs(msg: Message) {
   return (msg.text || '').split(' ').slice(1);
 }
 
+interface IConvertedVoice {
+  stream: fs.ReadStream;
+  filePath: string;
+}
+
 export async function createSound(
   msg: Message,
   fileId: string,
   identifier: string
-) {
-  const voiceId = await getVoiceIdFromAudioId(fileId, msg.chat.id);
+): Promise<string> {
+  const voice = await getVoiceFromAudioId(fileId);
+  const fileMessage = await bot.sendVoice(msg.chat.id, voice.stream, {
+    disable_notification: true,
+  });
+
+  if (areWeTestingWithJest()) {
+    await bot.deleteMessage(msg.chat.id, fileMessage.message_id.toString());
+  }
+
+  deleteFiles(voice.filePath);
+
+  if (!fileMessage.voice) {
+    throw new Error('There was no voice on sent message');
+  }
+
+  const voiceId = fileMessage.voice.file_id;
 
   await addSound(msg, {
     fileId: voiceId,
     identifier,
   });
-
   await clearUserAction(msg);
 
-  await reply(
-    msg,
-    `🥳 ${extractName(
-      msg
-    )}, your sound was added.\n/list to see your sounds\n/listall to see all sounds`
-  );
+  return `🥳 ${extractName(
+    msg
+  )}, your sound was added.\n/list to see your sounds\n/listall to see all sounds`;
 }
-export async function getVoiceIdFromAudioId(
-  audioId: string,
-  chatId: number
-): Promise<string> {
+
+export async function getVoiceFromAudioId(
+  audioId: string
+): Promise<IConvertedVoice> {
   return new Promise((resolve, reject) => {
     Logger.info(`Beginning pipeline for ${audioId}`);
     const t1 = performance.now();
@@ -59,19 +76,13 @@ export async function getVoiceIdFromAudioId(
         Logger.info(`-> Starting conversion on ${filePath}`);
 
         const readFileStream = await convertFileToOpus(filePath);
-        const fileMessage = await bot.sendVoice(chatId, readFileStream);
-
-        if (!fileMessage.voice) {
-          reject(new Error('There was no voice on sent message'));
-          return;
-        }
-
-        deleteFiles(filePath);
-
         const t2 = performance.now();
         Logger.info(`Ended pipeline for ${audioId} in ${t2 - t1} ms`);
 
-        resolve(fileMessage.voice.file_id);
+        resolve({
+          stream: readFileStream,
+          filePath,
+        });
       });
     });
   });

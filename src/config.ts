@@ -14,4 +14,5 @@ export default {
   },
   botToken: process.env.BOT_TOKEN || '',
   tempPath: os.tmpdir(),
+  testChatId: parseInt(process.env.TEST_CHAT_ID || '1', 10),
 };

@@ -7,41 +7,46 @@ import { ISound } from '../interfaces/types';
 import { createSound, extractName } from '../utils/telegramHelper';
 
 export function soundHandler() {
-  const listener = async (msg: Message) => {
-    const { currentAction, currentChatId } = await getUserState(msg);
-    const correctUserState =
-      currentAction === userActions.sendingSound ||
-      currentChatId === msg.chat.id;
+  const sharedListener = async (msg: Message) => {
+    const result = await soundListener(msg);
 
-    if (!correctUserState) {
-      return;
+    if (result) {
+      reply(msg, result);
     }
-
-    if (!msg.voice && !msg.audio) {
-      return reply(msg, botResponses.noVoiceOrAudio);
-    }
-
-    const fileSize =
-      (msg.voice ? msg.voice.file_size : (msg.audio as Audio).file_size) || 0;
-
-    if (fileSize > Math.pow(10, 6)) {
-      return reply(msg, 'Too big file');
-    }
-
-    const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
-
-    if (msg.caption) {
-      return createSound(msg, sound.fileId, msg.caption);
-    }
-
-    await setCurrentSound(msg, sound);
-    await setUserAction(msg, userActions.writingName);
-    reply(
-      msg,
-      `🤩 Thank you ${extractName(msg)}! What name would you want for it?`
-    );
   };
 
-  bot.on('audio', listener);
-  bot.on('voice', listener);
+  bot.on('audio', sharedListener);
+  bot.on('voice', sharedListener);
+}
+
+export async function soundListener(msg: Message) {
+  const { currentAction, currentChatId } = await getUserState(msg);
+  const correctUserState =
+    currentAction === userActions.sendingSound || currentChatId === msg.chat.id;
+
+  if (!correctUserState) {
+    return;
+  }
+
+  if (!msg.voice && !msg.audio) {
+    return botResponses.noVoiceOrAudio;
+  }
+
+  const fileSize =
+    (msg.voice ? msg.voice.file_size : (msg.audio as Audio).file_size) || 0;
+
+  if (fileSize > Math.pow(10, 6)) {
+    return 'Too big file';
+  }
+
+  const sound = camelcaseKeys(msg.voice || msg.audio) as ISound;
+
+  if (msg.caption) {
+    return createSound(msg, sound.fileId, msg.caption);
+  }
+
+  await setCurrentSound(msg, sound);
+  await setUserAction(msg, userActions.writingName);
+
+  return `🤩 Thank you ${extractName(msg)}! What name would you want for it?`;
 }

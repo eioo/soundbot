@@ -7,34 +7,43 @@ import { createSound } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {
-    Logger.message(`\n`, msg);
+    const result = await messageListener(msg);
 
-    if (!msg.text || msg.text.startsWith('/')) {
-      return;
+    if (result) {
+      reply(msg, result);
     }
-
-    const { currentAction, currentChatId } = await getUserState(msg);
-    const correctUserState =
-      currentAction === userActions.writingName &&
-      currentChatId === msg.chat.id;
-
-    if (!correctUserState) {
-      return;
-    }
-
-    const identifier = msg.text.toLowerCase();
-
-    if (!identifier) {
-      return reply(msg, botResponses.invalidIdentifier);
-    }
-
-    const soundExists = await getSoundFromUser(msg, identifier);
-
-    if (soundExists) {
-      return reply(msg, botResponses.identifierExists);
-    }
-
-    const lastSound = await getLastSound(msg);
-    createSound(msg, lastSound.fileId, identifier);
   });
+}
+
+export async function messageListener(msg: Message) {
+  Logger.message(`\n`, msg);
+
+  if (!msg.text || msg.text.startsWith('/')) {
+    return;
+  }
+
+  const { currentAction, currentChatId } = await getUserState(msg);
+  const correctUserState =
+    currentAction === userActions.writingName && currentChatId === msg.chat.id;
+
+  if (!correctUserState) {
+    return;
+  }
+
+  const identifier = msg.text.toLowerCase();
+
+  if (!identifier) {
+    return botResponses.invalidIdentifier;
+  }
+
+  const soundExists = await getSoundFromUser(msg, identifier);
+
+  if (soundExists) {
+    return botResponses.identifierExists;
+  }
+
+  const lastSound = await getLastSound(msg);
+  const result = await createSound(msg, lastSound.fileId, identifier);
+
+  return result;
 }

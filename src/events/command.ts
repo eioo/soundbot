@@ -15,32 +15,32 @@ import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
-    const response = await startHandler();
+    const response = await startListener();
     reply(msg, response);
   });
 
   bot.onText(/^\/add(sound)?$/i, async (msg: Message) => {
-    const response = await addHandler(msg);
+    const response = await addListener(msg);
     reply(msg, response);
   });
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
-    const response = await cancelHandler(msg);
+    const response = await cancelListener(msg);
     reply(msg, response);
   });
 
   bot.onText(/^\/list(all)?$/, async (msg: Message) => {
-    const response = await listHandler(msg);
+    const response = await listListener(msg);
     reply(msg, response);
   });
 
   bot.onText(/^\/(del(ete)?|remove) .+$/i, async (msg: Message) => {
-    const response = await deleteHandler(msg);
+    const response = await deleteListener(msg);
     reply(msg, response);
   });
 
   bot.onText(/^\/p(lay)? \w([\w ]+)?/i, async (msg: Message) => {
-    const { text, fileId } = await playHandler(msg);
+    const { text, fileId } = await playListener(msg);
 
     if (text) {
       return reply(msg, text);
@@ -52,21 +52,21 @@ export function commandHandler() {
   });
 }
 
-async function startHandler() {
+export async function startListener() {
   return botResponses.welcome;
 }
 
-async function addHandler(msg: Message): Promise<string> {
+export async function addListener(msg: Message): Promise<string> {
   await setUserAction(msg, userActions.sendingSound);
   return `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`;
 }
 
-async function cancelHandler(msg: Message): Promise<string> {
+export async function cancelListener(msg: Message): Promise<string> {
   await clearUserAction(msg);
   return botResponses.cancel;
 }
 
-async function deleteHandler(msg: Message): Promise<string> {
+export async function deleteListener(msg: Message): Promise<string> {
   const args = parseArgs(msg);
 
   if (!args.length) {
@@ -84,7 +84,7 @@ async function deleteHandler(msg: Message): Promise<string> {
   return botResponses.soundNotFound;
 }
 
-async function listHandler(msg: Message): Promise<string> {
+export async function listListener(msg: Message): Promise<string> {
   const listAll = (msg.text || '').endsWith('all');
   const sounds = listAll
     ? await getAllSounds()
@@ -101,7 +101,9 @@ async function listHandler(msg: Message): Promise<string> {
   return response;
 }
 
-async function playHandler(msg: Message): Promise<IPlayCommandResponse> {
+export async function playListener(
+  msg: Message
+): Promise<IPlayCommandResponse> {
   const args = (msg.text || '').split(' ').slice(1);
 
   if (!args.length) {

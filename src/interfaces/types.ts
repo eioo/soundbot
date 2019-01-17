@@ -15,3 +15,8 @@ export interface IUserAction {
   currentAction: string | null;
   currentChatId: number | null;
 }
+
+export interface IPlayCommandResponse {
+  text?: string;
+  fileId?: string;
+}

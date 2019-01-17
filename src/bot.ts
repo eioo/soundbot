@@ -21,3 +21,9 @@ export function reply(
     disable_notification: true,
   });
 }
+
+export function replyWithVoice(msg: TelegramBot.Message, fileId: string) {
+  return bot.sendVoice(msg.chat.id, fileId, {
+    disable_notification: true,
+  });
+}

@@ -1,95 +1,130 @@
 import * as fuzzysort from 'fuzzysort';
 import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
-import { bot, reply } from '../bot';
+import { bot, reply, replyWithVoice } from '../bot';
 import {
-  addUser,
   clearUserAction,
   deleteSoundFromUser,
   getAllSounds,
   getAllSoundsFromUser,
   getSoundFromUser,
   setUserAction,
-  userExists,
 } from '../database';
+import { IPlayCommandResponse } from '../interfaces/types';
 import { extractName, parseArgs } from '../utils/telegramHelper';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
-    await reply(msg, botResponses.welcome);
+    const response = await startHandler();
+    reply(msg, response);
   });
 
   bot.onText(/^\/add(sound)?$/i, async (msg: Message) => {
-    if (!(await userExists(msg))) {
-      await addUser(msg);
-    }
-
-    await setUserAction(msg, userActions.sendingSound);
-    await reply(
-      msg,
-      `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`
-    );
+    const response = await addHandler(msg);
+    reply(msg, response);
   });
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
-    await clearUserAction(msg);
-    await reply(msg, botResponses.cancel);
+    const response = await cancelHandler(msg);
+    reply(msg, response);
   });
 
   bot.onText(/^\/list(all)?$/, async (msg: Message) => {
-    const listAll = (msg.text || '').endsWith('all');
-    const sounds = listAll
-      ? await getAllSounds()
-      : await getAllSoundsFromUser(msg);
-
-    if (!sounds.length) {
-      return reply(msg, botResponses.noSoundsYet);
-    }
-
-    const response =
-      `🎵 *${listAll ? 'All' : 'Your'} sounds*\n` +
-      sounds.map(({ identifier }) => `${identifier}`).join('\n');
-
-    await reply(msg, response);
+    const response = await listHandler(msg);
+    reply(msg, response);
   });
 
   bot.onText(/^\/(del(ete)?|remove) .+$/i, async (msg: Message) => {
-    const args = parseArgs(msg);
-
-    if (!args.length) {
-      return reply(msg, botResponses.notEnoughArgs);
-    }
-
-    const identifier = args.join(' ');
-    const sound = await getSoundFromUser(msg, identifier);
-
-    if (sound) {
-      await deleteSoundFromUser(msg, identifier);
-      return reply(msg, botResponses.soundDeleted);
-    }
-
-    await reply(msg, botResponses.soundNotFound);
+    const response = await deleteHandler(msg);
+    reply(msg, response);
   });
 
   bot.onText(/^\/p(lay)? \w([\w ]+)?/i, async (msg: Message) => {
-    const args = (msg.text || '').split(' ').slice(1);
+    const { text, fileId } = await playHandler(msg);
 
-    if (!args.length) {
-      return reply(msg, botResponses.notEnoughArgs);
+    if (text) {
+      return reply(msg, text);
     }
 
-    const userInput = args.join(' ');
-    const allSounds = await getAllSounds();
-    const results = fuzzysort.go(userInput, allSounds, {
-      key: 'identifier',
-      limit: 1,
-    });
-
-    if (!results.length) {
-      return reply(msg, botResponses.soundNotFound);
+    if (fileId) {
+      replyWithVoice(msg, fileId);
     }
-
-    const { fileId } = results[0].obj;
-    return bot.sendVoice(msg.chat.id, fileId);
   });
+}
+
+async function startHandler() {
+  return botResponses.welcome;
+}
+
+async function addHandler(msg: Message): Promise<string> {
+  await setUserAction(msg, userActions.sendingSound);
+  return `🎶 ${extractName(msg)} please send/record your sound (or /cancel) 🎶`;
+}
+
+async function cancelHandler(msg: Message): Promise<string> {
+  await clearUserAction(msg);
+  return botResponses.cancel;
+}
+
+async function deleteHandler(msg: Message): Promise<string> {
+  const args = parseArgs(msg);
+
+  if (!args.length) {
+    return botResponses.notEnoughArgs;
+  }
+
+  const identifier = args.join(' ');
+  const sound = await getSoundFromUser(msg, identifier);
+
+  if (sound) {
+    await deleteSoundFromUser(msg, identifier);
+    return botResponses.soundDeleted;
+  }
+
+  return botResponses.soundNotFound;
+}
+
+async function listHandler(msg: Message): Promise<string> {
+  const listAll = (msg.text || '').endsWith('all');
+  const sounds = listAll
+    ? await getAllSounds()
+    : await getAllSoundsFromUser(msg);
+
+  if (!sounds.length) {
+    return botResponses.noSoundsYet;
+  }
+
+  const response =
+    `🎵 *${listAll ? 'All' : 'Your'} sounds*\n` +
+    sounds.map(({ identifier }) => `${identifier}`).join('\n');
+
+  return response;
+}
+
+async function playHandler(msg: Message): Promise<IPlayCommandResponse> {
+  const args = (msg.text || '').split(' ').slice(1);
+
+  if (!args.length) {
+    return {
+      text: botResponses.notEnoughArgs,
+    };
+  }
+
+  const userInput = args.join(' ');
+  const allSounds = await getAllSounds();
+  const results = fuzzysort.go(userInput, allSounds, {
+    key: 'identifier',
+    limit: 1,
+  });
+
+  if (!results.length) {
+    return {
+      text: botResponses.soundNotFound,
+    };
+  }
+
+  const { fileId } = results[0].obj;
+  return {
+    fileId,
+  };
 }

@@ -1,19 +1,9 @@
 import { Message } from 'node-telegram-bot-api';
 import { botResponses, userActions } from '.';
 import { bot, reply } from '../bot';
-import {
-  addSound,
-  clearUserAction,
-  getLastSound,
-  getSoundFromUser,
-  getUserState,
-} from '../database';
+import { getLastSound, getSoundFromUser, getUserState } from '../database';
 import * as Logger from '../utils/logger';
-import {
-  createSound,
-  extractName,
-  getVoiceIdFromAudioId,
-} from '../utils/telegramHelper';
+import { createSound } from '../utils/telegramHelper';
 
 export function messageHandler() {
   bot.on('message', async (msg: Message) => {

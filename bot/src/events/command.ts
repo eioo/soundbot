@@ -12,6 +12,7 @@ import {
 } from '../database';
 import { IPlayCommandResponse } from '../interfaces/types';
 import { extractName, parseArgs } from '../utils/telegramHelper';
+import config from '../config';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
@@ -49,6 +50,12 @@ export function commandHandler() {
     if (fileId) {
       replyWithVoice(msg, fileId);
     }
+  });
+
+  bot.onText(/^\/link$/i, async (msg: Message) => {
+    const url = `${config.webUrl}?chatId=${msg.chat.id}`;
+
+    reply(msg, `${url}`);
   });
 }
 

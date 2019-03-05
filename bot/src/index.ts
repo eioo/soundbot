@@ -5,6 +5,7 @@ process.env.NTBA_FIX_350 = '😋'; // -//-
 
 import { startBot } from './bot';
 import { areWeTestingWithJest } from './utils/jestCheck';
+import { startWebsocket } from './websocket';
 
 export function initialize() {
   process.on('unhandledRejection', e => {
@@ -12,6 +13,7 @@ export function initialize() {
   });
 
   startBot();
+  startWebsocket();
 }
 
 if (!areWeTestingWithJest()) {

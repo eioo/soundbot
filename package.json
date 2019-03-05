@@ -8,8 +8,11 @@
     "web": "cd web && npm start",
     "dev:bot": "cd bot && npm run dev",
     "dev:web": "cd web && npm run dev",
-    "start": "npm-run-all -p bot web",
-    "dev": "npm-run-all -p dev:*"
+    "install:bot": "cd bot && npm install",
+    "install:web": "cd web && npm install",
+    "preinstall": "npm-run-all -p install:*",
+    "dev": "npm-run-all -p dev:*",
+    "start": "npm-run-all -p bot web"
   },
   "repository": {
     "type": "git",

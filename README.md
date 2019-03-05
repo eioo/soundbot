@@ -16,16 +16,16 @@ Telegram bot which you can send sound to and share with others.
 2. Run following commands:
 
 ```
+npm install -g npm-run-all
 npm install
 npm run start
 ```
 
 ## Commands
 
+- **/sounds** - gives link to sound list
 - **/add** - adds a new sound
 - **/play _\<sound name>_**
-- **/list** - lists your sounds
-- **/listall** - lists all sounds available
 - **/delete _\<sound name>_** - removes sound from your list
 
 ## Environment variables

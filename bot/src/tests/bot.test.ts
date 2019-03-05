@@ -1,17 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { initialize } from '..';
+
+import { initialize } from '../';
 import { bot } from '../bot';
 import config from '../config';
 import { knex } from '../database';
 import { botResponses } from '../events';
-import {
-  addListener,
-  cancelListener,
-  deleteListener,
-  listListener,
-  startListener,
-} from '../events/command';
+import { addListener, cancelListener, deleteListener, startListener } from '../events/command';
 import { createSound } from '../utils/telegramHelper';
 import { createMessage } from './createMessage';
 
@@ -21,28 +16,6 @@ describe('Telegram bot command tests', () => {
   test('start command', async () => {
     const result = await startListener();
     expect(result).toBe(botResponses.welcome);
-  });
-
-  test('list command', async () => {
-    const msg = createMessage({
-      text: '/list',
-    });
-    const result = await listListener(msg);
-
-    expect(
-      result.startsWith('🎵 *Your') || result === botResponses.noSoundsYet
-    ).toBeTruthy();
-  });
-
-  test('listall command', async () => {
-    const msg = createMessage({
-      text: '/listall',
-    });
-    const result = await listListener(msg);
-
-    expect(
-      result.startsWith('🎵 *All') || result === botResponses.noSoundsYet
-    ).toBeTruthy();
   });
 
   test('delete command (sound not found)', async () => {

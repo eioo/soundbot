@@ -1,9 +1,11 @@
 import * as WebSocket from 'ws';
+
 import { bot } from '../bot';
+import config from '../config';
 import { getAllSounds } from '../database';
 
 export function startWebsocket() {
-  const wss = new WebSocket.Server({ port: 8080 });
+  const wss = new WebSocket.Server({ port: config.socketPort });
 
   wss.on('connection', async ws => {
     const allSounds = await getAllSounds();

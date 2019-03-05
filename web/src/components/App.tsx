@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
-const ws = new WebSocket('ws://localhost:8080/');
+import config from '../config';
+
+const ws = new WebSocket(`ws://${config.socketHost}:${config.socketPort}`);
 const urlParams = new URLSearchParams(window.location.search);
-const chatId = urlParams.get('chatId');
+const chatId = Number(urlParams.get('chatId'));
 
 function App() {
-  const [sounds, setSounds] = useState([]);
+  console.log(config);
 
-  useEffect(() => {
-    ws.onmessage = ({ data }) => {
-      const newSounds = JSON.parse(data);
-      setSounds(newSounds);
-    };
-  }, []);
+  if (!chatId) {
+    return <div>go away</div>;
+  }
+
+  const [sounds, setSounds] = useState<string[]>([]);
+
+  ws.onmessage = ({ data }) => {
+    const newSounds = JSON.parse(data);
+    setSounds(newSounds);
+  };
 
   const emit = (identifier: string) => () => {
     const message = {
@@ -22,14 +28,14 @@ function App() {
     };
 
     ws.send(JSON.stringify(message));
-    //ws.close();
-    //window.close();
   };
 
   return (
     <div className="wrapper">
       {sounds.map(sound => (
-        <button onClick={emit(sound)}>{sound}</button>
+        <button key={sound} onClick={emit(sound)}>
+          {sound}
+        </button>
       ))}
     </div>
   );

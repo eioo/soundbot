@@ -1,5 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
 import { knex } from '../database';
 
 describe('Database tests', () => {

@@ -1,18 +1,15 @@
 import * as fuzzysort from 'fuzzysort';
 import { Message } from 'node-telegram-bot-api';
-import { botResponses, userActions } from '.';
+
 import { bot, reply, replyWithVoice } from '../bot';
+import config from '../config';
 import {
-  clearUserAction,
-  deleteSoundFromUser,
-  getAllSounds,
-  getAllSoundsFromUser,
-  getSoundFromUser,
-  setUserAction,
+    clearUserAction, deleteSoundFromUser, getAllSounds, getAllSoundsFromUser, getSoundFromUser,
+    setUserAction
 } from '../database';
 import { IPlayCommandResponse } from '../interfaces/types';
 import { extractName, parseArgs } from '../utils/telegramHelper';
-import config from '../config';
+import { botResponses, userActions } from './';
 
 export function commandHandler() {
   bot.onText(/^\/start$/, async (msg: Message) => {
@@ -27,11 +24,6 @@ export function commandHandler() {
 
   bot.onText(/^\/cancel$/i, async (msg: Message) => {
     const response = await cancelListener(msg);
-    reply(msg, response);
-  });
-
-  bot.onText(/^\/list(all)?$/, async (msg: Message) => {
-    const response = await listListener(msg);
     reply(msg, response);
   });
 
@@ -52,9 +44,10 @@ export function commandHandler() {
     }
   });
 
-  bot.onText(/^\/link$/i, async (msg: Message) => {
-    const url = `${config.webUrl}?chatId=${msg.chat.id}`;
-
+  bot.onText(/^\/sounds?$/i, async (msg: Message) => {
+    const url = `http://${config.webHost}:${config.webPort}/?chatId=${
+      msg.chat.id
+    }`;
     reply(msg, `${url}`);
   });
 }
@@ -89,23 +82,6 @@ export async function deleteListener(msg: Message): Promise<string> {
   }
 
   return botResponses.soundNotFound;
-}
-
-export async function listListener(msg: Message): Promise<string> {
-  const listAll = (msg.text || '').endsWith('all');
-  const sounds = listAll
-    ? await getAllSounds()
-    : await getAllSoundsFromUser(msg);
-
-  if (!sounds.length) {
-    return botResponses.noSoundsYet;
-  }
-
-  const response =
-    `🎵 *${listAll ? 'All' : 'Your'} sounds*\n` +
-    sounds.map(({ identifier }) => `${identifier}`).join('\n');
-
-  return response;
 }
 
 export async function playListener(

@@ -4,8 +4,11 @@ import { Message } from 'node-telegram-bot-api';
 import { bot, reply, replyWithVoice } from '../bot';
 import config from '../config';
 import {
-    clearUserAction, deleteSoundFromUser, getAllSounds, getAllSoundsFromUser, getSoundFromUser,
-    setUserAction
+  clearUserAction,
+  deleteSoundFromUser,
+  getAllSounds,
+  getSoundFromUser,
+  setUserAction,
 } from '../database';
 import { IPlayCommandResponse } from '../interfaces/types';
 import { extractName, parseArgs } from '../utils/telegramHelper';
@@ -48,7 +51,15 @@ export function commandHandler() {
     const url = `http://${config.webHost}:${config.webPort}/?chatId=${
       msg.chat.id
     }`;
-    reply(msg, `${url}`);
+    const replyMessage = await reply(msg, `[Selaa ääniä 🔊](${url})`);
+
+    setTimeout(() => {
+      if (!replyMessage) {
+        return;
+      }
+
+      bot.deleteMessage(msg.chat.id, `${replyMessage.message_id}`);
+    }, 30 * 1000);
   });
 }
 

@@ -3301,6 +3301,11 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
+number-minify@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/number-minify/-/number-minify-1.0.1.tgz#8d4f8876c8a4fadcfddc11083d5298aed935bcea"
+  integrity sha512-qsld/sR6rYQfZYqmvY0bm4MI3u5126lsXGAeM9wy1rXHgqlhXvh3uI5NXQVUBY7Mp767TqIqnMO2cA99xtDKZg==
+
 nwsapi@^2.0.7:
   version "2.0.9"
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.0.9.tgz#77ac0cdfdcad52b6a1151a84e73254edc33ed016"

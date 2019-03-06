@@ -1,9 +1,9 @@
+import * as numberMinify from 'number-minify';
 import * as WebSocket from 'ws';
 
 import { bot } from '../bot';
 import config from '../config';
 import { getAllSounds } from '../database';
-import * as chatTokenUtil from '../utils/chatToken';
 
 interface IPlaySoundData {
   chatToken: string;
@@ -22,7 +22,11 @@ export function startWebsocket() {
     ws.on('message', message => {
       const data: IPlaySoundData = JSON.parse(message.toString());
       const { chatToken, identifier } = data;
-      const chatId = chatTokenUtil.decode(chatToken);
+      const chatId = numberMinify.decode(chatToken.replace('G', '-'), {
+        characters:
+          '0123456789ABCDEFHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+        useNegativePrefix: true,
+      });
 
       const foundFile = allSounds.find(
         sound => sound.identifier === identifier

@@ -1,7 +1,7 @@
 export function getChatToken() {
   const chatToken = window.location.pathname.split('/')[1];
 
-  if (!chatToken || !/^G?[a-z0-9]+$/.test(chatToken)) {
+  if (!chatToken || !/^G?[A-Za-z0-9]+$/.test(chatToken)) {
     return;
   }
 

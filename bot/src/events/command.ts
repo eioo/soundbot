@@ -1,5 +1,6 @@
 import * as fuzzysort from 'fuzzysort';
 import { Message } from 'node-telegram-bot-api';
+import * as numberMinify from 'number-minify';
 
 import { bot, reply, replyWithVoice } from '../bot';
 import config from '../config';
@@ -7,7 +8,6 @@ import {
     clearUserAction, deleteSoundFromUser, getAllSounds, getSoundFromUser, setUserAction
 } from '../database';
 import { IPlayCommandResponse } from '../interfaces/types';
-import * as chatTokenUtil from '../utils/chatToken';
 import { extractName, parseArgs } from '../utils/telegramHelper';
 import { botResponses, userActions } from './';
 
@@ -45,7 +45,14 @@ export function commandHandler() {
   });
 
   bot.onText(/^\/sounds?$/i, async (msg: Message) => {
-    const chatToken = chatTokenUtil.encode(msg.chat.id);
+    const chatToken = numberMinify
+      .encode(msg.chat.id, {
+        characters:
+          '0123456789ABCDEFHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+        useNegativePrefix: true,
+      })
+      .replace('-', 'G');
+
     const url = `http://${config.webHost}:${config.webPort}/${chatToken}`;
     const replyMessage = await reply(msg, `🔊 Selaa ääniä: ${url}`);
 

@@ -4,12 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bot": "cd bot && npm start",
-    "web": "cd web && npm start",
-    "dev:bot": "cd bot && npm run dev",
-    "dev:web": "cd web && npm run dev",
-    "install:bot": "cd bot && npm install",
-    "install:web": "cd web && npm install",
+    "bot": "cd bot && yarn start",
+    "web": "cd web && yarn start",
+    "dev:bot": "cd bot && yarn dev",
+    "dev:web": "cd web && yarn dev",
+    "install:bot": "cd bot && yarn install",
+    "install:web": "cd web && yarn install",
     "preinstall": "npm-run-all -s install:*",
     "dev": "npm-run-all -p dev:*",
     "start": "npm-run-all -p bot web"

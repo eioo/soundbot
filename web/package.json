@@ -14,7 +14,7 @@
     "typescript": "3.3.3333"
   },
   "scripts": {
-    "start": "cp ../.env .env && npm run build && serve -s build",
+    "start": "cp ../.env .env && yarn build && serve -s build",
     "dev": "cp ../.env .env && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

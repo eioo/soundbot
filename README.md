@@ -5,6 +5,7 @@ Telegram bot which you can send sound to and share with others.
 ## Requirements
 
 - Node.js
+- Yarn
 - PostgreSQL database
 - FFmpeg (with _libopus_ codec)
 
@@ -16,9 +17,9 @@ Telegram bot which you can send sound to and share with others.
 2. Run following commands:
 
 ```
-npm install -g npm-run-all
-npm install
-npm run start
+yarn global add npm-run-all
+yarn install
+yarn start
 ```
 
 ## Commands

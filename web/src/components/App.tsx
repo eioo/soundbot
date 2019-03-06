@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import config from '../config';
+import React, { useState } from 'react';
 import './App.css';
 
-const ws = new WebSocket(`ws://${config.socketHost}:${config.socketPort}`);
-const urlParams = new URLSearchParams(window.location.search);
-const chatId = Number(urlParams.get('chatId'));
+import config from '../config';
+import * as chatTokenUtil from '../utils/chatToken';
 
-if (!chatId) {
-  window.close();
-}
+const ws = new WebSocket(`ws://${config.socketHost}:${config.socketPort}`);
+const chatToken = chatTokenUtil.getChatToken();
 
 function App() {
+  if (!chatToken) {
+    return <div>go away</div>;
+  }
+
   const [sounds, setSounds] = useState<string[]>([]);
 
-  useEffect(() => {
+  if (!ws.onmessage) {
     ws.onmessage = ({ data }) => {
       const newSounds = JSON.parse(data);
       setSounds(newSounds);
     };
-  });
+  }
 
   const emit = (identifier: string) => () => {
     const message = {
-      chatId,
+      chatToken,
       identifier
     };
 

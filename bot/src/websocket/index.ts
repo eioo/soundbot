@@ -3,6 +3,12 @@ import * as WebSocket from 'ws';
 import { bot } from '../bot';
 import config from '../config';
 import { getAllSounds } from '../database';
+import * as chatTokenUtil from '../utils/chatToken';
+
+interface IPlaySoundData {
+  chatToken: string;
+  identifier: string;
+}
 
 export function startWebsocket() {
   const wss = new WebSocket.Server({ port: config.socketPort });
@@ -14,7 +20,9 @@ export function startWebsocket() {
     ws.send(JSON.stringify(identifiers));
 
     ws.on('message', message => {
-      const { chatId, identifier } = JSON.parse(message.toString());
+      const data: IPlaySoundData = JSON.parse(message.toString());
+      const { chatToken, identifier } = data;
+      const chatId = chatTokenUtil.decode(chatToken);
 
       const foundFile = allSounds.find(
         sound => sound.identifier === identifier
